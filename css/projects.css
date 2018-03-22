@@ -1,0 +1,55 @@
+.portfolio_block {
+  background-color: #888;
+  padding-bottom: 50px;
+  padding-top: 50px; }
+
+.gallery {
+  -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+          box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  max-width: 1014px;
+  margin: auto;
+  padding-bottom: 50px; }
+
+.gallery {
+  padding: 2px;
+  padding: 0.4vw;
+  font-size: 0;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
+
+.gallery div {
+  -webkit-box-flex: 1;
+      -ms-flex: auto;
+          flex: auto;
+  width: 200px;
+  margin: 0.5vw;
+  z-index: 5; }
+
+.gallery div img {
+  width: 100%;
+  height: auto; }
+
+/*Grayscale */
+img {
+  -webkit-filter: grayscale(100%);
+          filter: grayscale(100%);
+  -webkit-filter: saturate(0);
+          filter: saturate(0);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  /*   box-shadow: 2px 2px 5px */ }
+
+img:hover {
+  -webkit-filter: grayscale(0);
+          filter: grayscale(0);
+  -webkit-filter: saturate(1.5);
+          filter: saturate(1.5);
+  -webkit-box-shadow: 0px 0px 5px;
+          box-shadow: 0px 0px 5px; }
+
+/*# sourceMappingURL=projects.css.map */
