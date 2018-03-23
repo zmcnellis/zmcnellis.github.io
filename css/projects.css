@@ -1,3 +1,32 @@
+.portfolio_description {
+  background-color: #888;
+  padding: 0 0 20px 0;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: none; }
+
+.arrow-box {
+  border: solid 2px black;
+  width: 25px;
+  height: 16px;
+  position: absolute;
+  left: calc(50% - 12px); }
+  .arrow-box:hover {
+    cursor: pointer; }
+
+i {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  position: absolute;
+  left: 6px;
+  top: 3px; }
+
+.arrow-down {
+  -webkit-transform: rotate(-135deg);
+          transform: rotate(-135deg); }
+
 .portfolio_block {
   background-color: #888;
   padding-bottom: 50px;
@@ -33,6 +62,8 @@
 .gallery div img {
   width: 100%;
   height: auto; }
+  .gallery div img:hover {
+    cursor: pointer; }
 
 /*Grayscale */
 img {

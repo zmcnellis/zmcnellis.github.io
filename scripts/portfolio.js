@@ -18,3 +18,19 @@ function checkTime(i) {
   return i;
 }
 
+$('.gallery img').on('click', function(event) {
+  var description_id_selector = '#' + $(this).attr('alt');
+
+  $('.portfolio_description').each(function() {
+    $(this).hide();
+  });
+
+  $(description_id_selector).show();
+  $(document).scrollTop($(description_id_selector));
+});
+
+$('.close-description').on('click', function(event) {
+  $('.portfolio_description').each(function() {
+    $(this).hide();
+  });
+});

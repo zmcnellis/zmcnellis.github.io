@@ -80,7 +80,7 @@ p
     width: 256px
     height: 172px
     background:
-      image: url(http://coderx.herokuapp.com/images/computer.gif)
+      image: url(#{$imagePath}/computer.gif)
       repeat: no-repeat
       position: top left
     position: absolute
@@ -100,13 +100,13 @@ p
     text-align: center
     padding-top: 5rem
 
-  a
-    color: #23527c
-    &:hover
-      text-decoration: none
-      color: #B6D3E4
-    &:focus
-      text-decoration: none
+a
+  color: #23527c !important
+  &:hover
+    text-decoration: none !important
+    color: #B6D3E4 !important
+  &:focus
+    text-decoration: none !important
   
 .section-header
   color: #B6D3E4
@@ -159,7 +159,7 @@ p
   position: relative
   text-align: center
   vertical-align: middle
-  color: #aeaeae
+  color: #aeaeae !important
   font-size: 1.5em
   line-height: 35px
   padding: 5px 20px 5px 20px
@@ -167,10 +167,13 @@ p
 
   &:hover
     border-color: #fefefe
-    color: #fefefe
+    color: #fefefe !important
     text-decoration: none
 
-  
+.custom-button.small
+  width: 80px
+  height: 20px
+  font-size: 1.0em
     
     
   
