@@ -1,6 +1,9 @@
 window.onload = startTime;
 
 function startTime() {
+  if ($('.time') == undefined) {
+    return;
+  }
   var today = new Date();
   var h = today.getHours();
   var timeofday = h >= 12 ? "PM" : "AM"
