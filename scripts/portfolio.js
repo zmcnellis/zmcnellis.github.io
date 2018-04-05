@@ -1,7 +1,7 @@
 window.onload = startTime;
 
 function startTime() {
-  if ($('.time').length) {
+  if (!$('.time').length) {
     return;
   }
   var today = new Date();
