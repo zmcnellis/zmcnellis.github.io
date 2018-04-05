@@ -1,0 +1,77 @@
+<html>
+
+<head>
+	<!-- google fonts -->
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro|Anaheim' rel='stylesheet' type='text/css'>
+
+	<!-- css stuff -->
+	<style type="text/css">
+	h1 {
+		text-align: left;
+		font-size:28px;
+		font-family: "Source Sans Pro", sans-serif;
+		color:#444;
+	}
+	h2 {
+		text-align: left;
+		font-size:20px;
+		font-family: "Source Sans Pro", sans-serif;
+		color:#666;
+	}
+	td {
+		font-size: 16px;
+		color: #222;
+		font-family: 'Anaheim', sans-serif;
+	}
+	p {
+		text-align: left;
+		font-size: 16px;
+		color: #000;
+		font-family: 'Anaheim', sans-serif;
+		padding-bottom: 10px;
+	}
+	</style>
+
+	<!-- page title -->
+	<title>8170 Project Proposal</title>
+</head>
+
+<!-- page content -->
+<body>
+	<div style="width:850px; margin: auto; border: 2px solid #666;">
+	<div style="margin: 20px 18px 20px 18px">
+	<table style="width: 100%;">
+		<tr >
+			<td>Zachary McNellis</td>
+			<td style="text-align: right;">11/06/15</td>
+		</tr>
+	</table>
+	<h1>CPSC 8170: Final Project Proposal</h1>
+	<hr/>
+	<div style="padding-bottom: 2px;"></div>
+
+	<h2>Overview</h2>
+	<p>For my final project, I hope to simulate the behavior of a lava lamp in OpenGL. To simplify the animation, I will model the fluid using spherical particles or blobs known as <a href="https://en.wikipedia.org/wiki/Metaballs">metaballs</a>, and then approximate their movement using the <a href="https://www.cs.virginia.edu/johntran/GLunch/marchingcubes.pdf">marching cubes</a> algorithm.</p>
+
+	<h2>Method</h2>
+	<p>The proposed project is essentially an extension of the particles assignment. I will first try to implement blobby objects in 2D using the marching squares algorithm, and then try to do the same in 3D using marching cubes. The marching squares algorithm generates an approximation for a contour line of a 2D scalar grid by examining the corners of each cell. In order to display the contour line, every case can be enumerated as in Figure 3. Therefore in my implementation, I will have to first specify a region to subdivide into individual cells (or voxels in 3D). Next using the marching squares algorithms, I will draw the contour lines for circular objects moving within the region. After doing this at a large enough grid resolution, the result should be a blobby effect (Figure 1). Finally, I will use this same process in 3D, improve the animation by constraining the objects within a lava lamp using collision detection, and add lighting.</p>
+
+	<h2>Concept Images</h2>
+	<img style="width: 268px" src="http://www.paulsprojects.net/opengl/metaballs/metaballs1.png">
+	<img style="width: 268px" src="http://ecx.images-amazon.com/images/I/516W2Vv8W3L._SL1000_.jpg">
+	<img style="width: 268px" src="http://ej.iop.org/images/1742-5468/2008/12/P12015/Full/0006006.jpg">
+
+	<table style="width: 100%;">
+		<tr>
+			<td style="text-align: center; width: 268px;"><b>Fig. 1</b> "blobby" objects</td>
+			<td style="text-align: center; width: 268px;"><b>Fig. 2</b> lava lamp model</td>
+			<td style="text-align: center; width: 268px;"><b>Fig. 3</b> marching squares lookup table</td>
+		</tr>
+	</table>
+
+	</div>
+	</div>
+
+</body>
+
+</html>
