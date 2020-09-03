@@ -1,0 +1,131 @@
+body {
+  text-align: center;
+  margin-top: 50px;
+}
+
+h1 {
+  color: #737373;
+  font-family: 'Roboto', sans-serif; 
+}
+
+canvas {
+  /*border: 1px solid #666;*/
+  /*border-radius: 5px;*/
+  /*padding: 50px;*/
+  border-radius: 2px 2px 0 0;
+}
+
+button {
+  width: 70px;
+  height: 20px;
+}
+
+#controls {
+  width: 513px;
+  position: absolute;
+  left: 50%;
+  margin-left: -258px;
+}
+
+#reset {
+  right: 0;
+  position: absolute;
+}
+
+#about {
+  left: 0;
+  position: absolute;
+}
+
+.col12 {
+  width: 100%;
+}
+
+.card {
+  display: inline-block;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  width: 513px;
+  height: 513px;
+}
+
+.card > .card-content {
+  margin-top: 0px;
+}
+
+/* modal */
+#page-mask {
+  background: rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+}
+
+#modal {
+  font-family: 'Roboto', sans-serif; 
+  position: absolute;
+  width: 600px;
+  height: 351px;
+  top: 20%;
+  left: 50%;
+  margin-left: -300px;
+  background-color: #FAFAFA;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+  display: none;
+}
+
+#modal-header {
+  position: relative;
+  width: 590px;
+  height: 40px;
+  background-color: #747474;
+  box-shadow:inset 0 -15px 5px -16px #222;
+  font-size: 14pt;
+  text-align: left;
+  line-height: 40px;
+  padding-left: 10px;
+  color: #E6E6E6;
+}
+
+#modal-body {
+  position: relative;
+  width: 580px;
+  height: 240px;
+  margin: 10px 0 0 10px;
+  text-align: left;
+  font-size: 12pt;
+}
+
+#modal-footer {
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #DCDCDC;
+  color: #2695F3;
+  width: 580px;
+  margin: 10px 0 0 10px;
+  height: 50px;
+}
+
+#modal-footer > .modal-button {
+  user-select: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 50px;
+  background-color: #FAFAFA;
+  line-height: 50px;
+  font-size: 12pt;
+}
+
+#modal-footer > .modal-button:hover {
+  background-color: #E6E6E6;
+  cursor: pointer;
+}
+
+#modal-footer > .modal-button:active {
+  background-color: #C7C7C7;
+}

@@ -1,6 +1,6 @@
 # zmcnellis.github.io
 
-Description coming.
+Personal website and portfolio
 
 ## Author
 - Zachary McNellis
