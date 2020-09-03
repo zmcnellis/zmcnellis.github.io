@@ -18,6 +18,7 @@ const Footer = () => {
           <Logo src={ReactLogo} alt='React' />
         </a>{' '}
         — &copy; Copyright {year}, Zachary McNellis
+        — <a href='https://github.com/zmcnellis/zmcnellis.github.io/tree/source'>Source code</a>
       </Description>
     </Wrapper>
   )
