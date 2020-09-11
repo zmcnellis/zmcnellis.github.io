@@ -85,7 +85,7 @@ const LeftSection = styled.div`
 `
 
 const Name = styled.a`
-  display: block;
+  display: flex;
   font-weight: bold;
   width: 130px;
   text-decoration: none;

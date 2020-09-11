@@ -7,9 +7,11 @@ const Intro = () => (
   <Wrapper>
     <HeadingRow>
       <Heading>Hey, I’m Zach - A Software Engineer in San Francisco.</Heading>
-      <AvatarBlock>
-        <Avatar src={Zach} alt='Zachary McNellis' />
-      </AvatarBlock>
+      <AnimationWrapper>
+        <AvatarBlock>
+          <Avatar src={Zach} alt='Zachary McNellis' />
+        </AvatarBlock>
+      </AnimationWrapper>
     </HeadingRow>
     <About>
       I’ve delivered features and launched A/B tests for millions of users at{' '}
@@ -57,7 +59,7 @@ const AvatarBlock = styled.div`
   position: relative;
   transition: 800ms all cubic-bezier(0.5, 1, 0.4, 2) 10ms;
   padding-bottom: 12px;
-  
+
   &::after {
     opacity: 0;
     content: '👋';
@@ -74,14 +76,6 @@ const AvatarBlock = styled.div`
     border: 1px solid ${colors.black};
   }
 
-  &:hover {
-    transform: rotateY(160deg) scale(1.2);
-
-    &::after {
-      opacity: 1;
-    }
-  }
-
   ${breakpoints.medium`
     padding-bottom: 0;
   `};
@@ -91,6 +85,24 @@ const Avatar = styled.img`
   border-radius: 100%;
   width: 74px;
   height: 74px;
+`
+
+const AnimationWrapper = styled.div`
+  width: 94px;
+  height: 94px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    ${AvatarBlock} {
+      transform: rotateY(160deg) scale(1.2);
+
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
 `
 
 const About = styled.p`
