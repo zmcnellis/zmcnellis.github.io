@@ -179,18 +179,11 @@ img {
   }
 }
 
-/* A softened rainbow that still reads as colourful against the beige. */
+/* Softened rainbow stops. Used directly in each glow's conic-gradient so the
+   animated --glow-angle drives the gradient without an extra var() indirection
+   (indirection can stop the per-frame re-evaluation in some browsers). */
 :root {
-  --rainbow: conic-gradient(
-    from var(--glow-angle),
-    #ff6b81,
-    #ffb648,
-    #ffe66d,
-    #5cdb8f,
-    #5ab9ff,
-    #b98cff,
-    #ff6b81
-  );
+  --rainbow-stops: #ff6b81, #ffb648, #ffe66d, #5cdb8f, #5ab9ff, #b98cff, #ff6b81;
 }
 
 /* ---------- Scroll-in animation (GSAP) ---------- */
