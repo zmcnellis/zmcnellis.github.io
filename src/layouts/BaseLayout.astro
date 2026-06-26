@@ -10,14 +10,11 @@ interface Props {
 }
 
 const {
-  title = "Zachary Sorensen McNellis",
+  title = "Home",
   description = "Zachary Sorensen McNellis — software engineer in San Francisco.",
 } = Astro.props;
 
-const fullTitle =
-  title === "Zachary Sorensen McNellis"
-    ? title
-    : `${title} · Zachary S. McNellis`;
+const fullTitle = `${title} | Zachary McNellis`;
 ---
 
 <!doctype html>

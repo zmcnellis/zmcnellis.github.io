@@ -2,21 +2,119 @@
 import BlobField from "./BlobField.tsx";
 ---
 
-<div class="blob-bg" aria-hidden="true">
-  <BlobField client:visible />
-</div>
+<!-- The island renders two fixed layers itself: the background canvas
+     (behind content) and the interactive mode switcher (above content). -->
+<BlobField client:only="react" />
 
-<style>
-  .blob-bg {
+<style is:global>
+  .blob-canvas {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    /* Fallback paint before the canvas mounts / if JS is disabled. */
     background-color: var(--bg);
   }
-  /* Keep the canvas itself unselectable and behind everything. */
-  .blob-bg :global(canvas) {
+  .blob-canvas canvas {
     display: block;
+  }
+
+  /* ---- Mode switcher pill (top-right floating) ---- */
+  .mode-control {
+    position: fixed;
+    top: 4.8rem;
+    right: 1.5rem;
+    z-index: 50;
+    font-family: var(--font-mono);
+  }
+
+  .mode-control__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
+    padding: 0.35rem 0.7rem;
+    font: inherit;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    background: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .mode-control__pill:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  .mode-control__star {
+    color: var(--accent);
+  }
+  .mode-control__chev {
+    opacity: 0.6;
+  }
+
+  .mode-control__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 256px;
+    max-width: 78vw;
+    margin: 0;
+    padding: 0.3rem;
+    list-style: none;
+    background: var(--bg-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(43, 41, 38, 0.14);
+  }
+  .mode-control__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+  }
+  .mode-control__item:hover {
+    background: var(--bg-sunk);
+  }
+  .mode-control__item-name {
+    font-size: var(--fs-sm);
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .mode-control__item.is-active .mode-control__item-name {
+    color: var(--accent);
+  }
+  .mode-control__item-desc {
+    font-family: var(--font-serif);
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+    color: var(--ink-muted);
+  }
+
+  /* On small screens, float bottom-right and open the menu upward. */
+  @media (max-width: 640px) {
+    .mode-control {
+      top: auto;
+      bottom: 1.1rem;
+      right: 1.1rem;
+    }
+    .mode-control__menu {
+      top: auto;
+      bottom: calc(100% + 6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mode-control__pill {
+      backdrop-filter: none;
+    }
   }
 </style>
