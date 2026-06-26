@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import portrait from "../assets/bio-portrait.jpg";
 ---
 
 <BaseLayout title="Bio" description="About Zachary Sorensen McNellis.">
@@ -7,6 +9,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <p class="label" data-animate>Bio</p>
     <h1 data-animate>About</h1>
     <hr class="rule" data-animate />
+    <figure class="bio-figure" data-animate>
+      <Image
+        src={portrait}
+        alt="Zachary and his dog Boulder at the lakeshore, snowy mountains behind them"
+        class="bio-photo"
+        widths={[360, 540, 720]}
+        sizes="(max-width: 640px) 90vw, 320px"
+      />
+      <figcaption>Boulder and me, lakeside.</figcaption>
+    </figure>
     <p data-animate>
       I'm originally from Charleston, South Carolina, where I grew up and where
       most of my family still lives. I'm a proud uncle, an avid rollerblader,
@@ -35,3 +47,33 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </p>
   </article>
 </BaseLayout>
+
+<style>
+  .bio-figure {
+    margin: var(--space-5) 0;
+    max-width: 360px;
+  }
+  .bio-photo {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--rule-strong);
+    display: block;
+  }
+  .bio-figure figcaption {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+  }
+
+  @media (min-width: 700px) {
+    /* Let the portrait sit to the right of the prose on wider screens. */
+    .bio-figure {
+      float: right;
+      max-width: 300px;
+      margin: 0 0 var(--space-4) var(--space-5);
+    }
+  }
+</style>
