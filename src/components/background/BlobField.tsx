@@ -9,21 +9,21 @@ function FluidScene({ reduced }: { reduced: boolean }) {
   const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
 
-  const sim = useMemo(
-    () => new FluidSimulation(gl, size.width, size.height),
-    // build once; resize is forgiving for an abstract background
+  // Rebuild the solver when the viewport size changes so the field aspect
+  // tracks the screen (otherwise blobs stretch on resize / rotate). Pre-warm
+  // every build so the first painted frame already shows formed, moving blobs
+  // rather than static circles growing in.
+  const sizeKey = `${size.width}x${size.height}`;
+  const sim = useMemo(() => {
+    const s = new FluidSimulation(gl, size.width, size.height);
+    s.warmup(reduced ? 240 : 130, STEP);
+    invalidate();
+    return s;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  }, [gl, sizeKey, reduced]);
 
-  useEffect(() => {
-    if (reduced) {
-      // Render a single calm frame, then leave it static.
-      sim.warmup(180, STEP);
-      invalidate();
-    }
-    return () => sim.dispose();
-  }, [sim, reduced, invalidate]);
+  // Dispose the previous solver whenever a new one replaces it (or on unmount).
+  useEffect(() => () => sim.dispose(), [sim]);
 
   const acc = useRef(0);
   useFrame((_, delta) => {

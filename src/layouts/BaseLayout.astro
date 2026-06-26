@@ -46,6 +46,22 @@ const fullTitle =
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta name="twitter:card" content="summary" />
+
+    <!-- Pre-hide animated elements (only when motion is allowed); reveal as a
+         failsafe if the animation script never runs. Runs before paint. -->
+    <script is:inline>
+      (function () {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        document.documentElement.classList.add("anim");
+        addEventListener("load", function () {
+          setTimeout(function () {
+            if (!document.documentElement.classList.contains("anim-ready")) {
+              document.documentElement.classList.remove("anim");
+            }
+          }, 1500);
+        });
+      })();
+    </script>
   </head>
   <body>
     <BlobField />
@@ -54,5 +70,32 @@ const fullTitle =
       <slot />
     </main>
     <Footer />
+
+    <script>
+      import { gsap } from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        gsap.registerPlugin(ScrollTrigger);
+        // mark ready so the head failsafe stands down
+        document.documentElement.classList.add("anim-ready");
+
+        const items = gsap.utils.toArray<HTMLElement>("[data-animate]");
+        items.forEach((el, i) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: 22 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power2.out",
+              delay: Math.min(i, 8) * 0.05,
+              scrollTrigger: { trigger: el, start: "top 88%", once: true },
+            }
+          );
+        });
+      }
+    </script>
   </body>
 </html>

@@ -13,35 +13,39 @@ const pages = [
 
 <BaseLayout>
   <section class="document hero">
-    <Image
-      src={profile}
-      alt="Portrait of Zachary Sorensen McNellis"
-      class="portrait"
-      width={160}
-      height={160}
-      densities={[1, 2]}
-    />
-    <p class="label">Software Engineer · San Francisco</p>
-    <h1>Zachary Sorensen McNellis</h1>
-    <p class="lede">
+    <span class="portrait-wrap" data-animate>
+      <Image
+        src={profile}
+        alt="Portrait of Zachary Sorensen McNellis"
+        class="portrait"
+        width={160}
+        height={160}
+        densities={[1, 2]}
+      />
+    </span>
+    <p class="label" data-animate>Software Engineer · San Francisco</p>
+    <h1 data-animate>Zachary Sorensen McNellis</h1>
+    <p class="lede" data-animate>
       I'm a software engineer based in San Francisco. I like building things
       that are fast, careful, and a little bit playful — with the occasional
       detour into graphics and simulation (the blobs drifting behind this page
       are a real&nbsp;fluid&nbsp;solver).
     </p>
-    <SocialLinks class="hero-social" />
+    <SocialLinks class="hero-social" data-animate />
   </section>
 
-  <hr class="rule" />
+  <hr class="rule" data-animate />
 
   <nav class="document index-nav" aria-label="Sections">
     <ul>
       {
         pages.map((p) => (
-          <li>
+          <li data-animate>
             <a href={p.href} class="index-card">
-              <span class="index-title">{p.title}</span>
-              <span class="index-blurb muted">{p.blurb}</span>
+              <span class="index-card__body">
+                <span class="index-title">{p.title}</span>
+                <span class="index-blurb muted">{p.blurb}</span>
+              </span>
             </a>
           </li>
         ))
@@ -54,14 +58,42 @@ const pages = [
   .hero {
     text-align: left;
   }
+
+  /* ---- Portrait with animated rainbow glow on hover ---- */
+  .portrait-wrap {
+    position: relative;
+    z-index: 0;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: var(--space-4);
+  }
+  .portrait-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background: var(--rainbow);
+    filter: blur(16px);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+  }
+  .portrait-wrap:hover::before {
+    opacity: 0.9;
+    animation: glow-spin 4s linear infinite;
+  }
   .portrait {
     width: 96px;
     height: 96px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid var(--rule-strong);
-    margin-bottom: var(--space-4);
+    transition: transform 0.4s ease;
   }
+  .portrait-wrap:hover .portrait {
+    transform: scale(1.03);
+  }
+
   .hero h1 {
     margin: var(--space-1) 0 var(--space-3);
     font-size: var(--fs-3xl);
@@ -74,6 +106,8 @@ const pages = [
   .hero-social {
     margin-top: var(--space-4);
   }
+
+  /* ---- Section index cards with rainbow glow on hover ---- */
   .index-nav ul {
     list-style: none;
     margin: 0;
@@ -82,19 +116,46 @@ const pages = [
     gap: var(--space-3);
   }
   .index-card {
+    position: relative;
+    z-index: 0;
+    display: block;
+    border-radius: 8px;
+    border-bottom: none;
+    transition: transform 0.25s ease;
+  }
+  /* The rainbow glow sits behind the opaque body, so it only haloes the edges. */
+  .index-card::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: var(--rainbow);
+    filter: blur(13px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    z-index: -1;
+  }
+  .index-card__body {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
     padding: var(--space-3) var(--space-4);
     border: 1px solid var(--rule);
-    border-radius: 4px;
-    background: color-mix(in srgb, var(--bg-raised) 70%, transparent);
-    transition: border-color 0.18s ease, background 0.18s ease;
+    border-radius: inherit;
+    background: var(--bg-raised);
+    transition: border-color 0.25s ease;
   }
   .index-card:hover {
-    border-color: var(--rule-strong);
-    background: var(--bg-raised);
+    transform: translateY(-2px);
     color: var(--ink);
+  }
+  .index-card:hover .index-card__body {
+    border-color: transparent;
+  }
+  .index-card:hover::before {
+    opacity: 0.6;
+    animation: glow-spin 6s linear infinite;
   }
   .index-title {
     font-weight: 700;

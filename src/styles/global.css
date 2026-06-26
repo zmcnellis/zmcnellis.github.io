@@ -166,6 +166,65 @@ img {
   padding: var(--space-6) 0 var(--space-7);
 }
 
+/* ---------- Animated rainbow glow (shared) ---------- */
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes glow-spin {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+
+/* A softened rainbow that still reads as colourful against the beige. */
+:root {
+  --rainbow: conic-gradient(
+    from var(--glow-angle),
+    #ff6b81,
+    #ffb648,
+    #ffe66d,
+    #5cdb8f,
+    #5ab9ff,
+    #b98cff,
+    #ff6b81
+  );
+}
+
+/* ---------- Scroll-in animation (GSAP) ---------- */
+/* Only hide elements when JS will animate them in — set by an inline head
+   script that respects prefers-reduced-motion, so no-JS / reduced-motion
+   users always see content. */
+.anim [data-animate] {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  :root {
+    --fs-base: 1.05rem;
+    --fs-lg: 1.25rem;
+    --fs-xl: 1.6rem;
+    --fs-2xl: 2rem;
+    --fs-3xl: 2.4rem;
+    --space-6: 3rem;
+    --space-7: 4rem;
+  }
+  .document {
+    padding: 0 var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 /* Visually-hidden but accessible */
 .sr-only {
   position: absolute;
