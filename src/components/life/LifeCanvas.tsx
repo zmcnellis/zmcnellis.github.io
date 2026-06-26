@@ -1,28 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Conway's Game of Life rendered as soft-body metaballs.
+ * Conway's Game of Life rendered as a glowing neon grid.
  *
- * The simulation is a standard toroidal Conway grid stepped at a fixed rate.
- * Rendering is the twist: each living cell owns an animated radius that springs
- * up on birth and melts down on death, drawn as a soft alpha-gradient circle.
- * A CSS `blur() contrast()` filter on the canvas thresholds those overlapping
- * alphas into merged, gooey metaball silhouettes — the same family of look as
- * the fluid-blob background elsewhere on the site. Cell age maps onto the
- * site's rainbow palette so long-lived colonies drift through the spectrum.
+ * A standard toroidal Conway grid stepped at a fixed rate. Each living cell
+ * owns an animated radius that springs up on birth and melts down on death, and
+ * is drawn as a neon dot with a white-hot core over a colored glow. Rather than
+ * clearing the canvas each frame, we fade it toward black — so moving structures
+ * (gliders, spaceships) leave phosphor motion trails. Cell age maps onto a cool
+ * aurora→magenta palette, and the board seeds with a Gosper glider gun so there's
+ * always a stream of gliders flying across the field.
  */
 
-const CELL = 24; // CSS px per cell
+const CELL = 16; // CSS px per cell
 const MAX_DT = 0.05; // clamp frame delta (s)
+const FADE = 0.11; // per-frame fade toward bg (lower = longer comet trails)
+const BG = "7,6,26"; // canvas backdrop (matches the stage), as "r,g,b"
 // A cohesive neon gradient — aurora/synthwave cool tones sweeping into magenta.
-// Newborn cells glow aqua and drift through the spectrum as a colony ages, which
-// reads as merged plasma against the dark stage.
+// Newborn cells glow aqua and drift through the spectrum as a colony ages.
 const PALETTE: [number, number, number][] = [
-  [0x00, 0xf5, 0xd4], // aqua
-  [0x00, 0xbb, 0xf9], // cyan
-  [0x5d, 0x8b, 0xff], // periwinkle
-  [0x9b, 0x5d, 0xe5], // violet
-  [0xf1, 0x5b, 0xb5], // magenta
+  [0x3a, 0xf5, 0xe0], // aqua
+  [0x2c, 0xc5, 0xff], // cyan
+  [0x6d, 0x8b, 0xff], // periwinkle
+  [0xb1, 0x6a, 0xff], // violet
+  [0xff, 0x5b, 0xc8], // magenta
+];
+
+// Gosper glider gun (canonical cell coordinates) — emits a glider every 30 gens.
+const GLIDER_GUN: [number, number][] = [
+  [0, 4], [0, 5], [1, 4], [1, 5],
+  [10, 4], [10, 5], [10, 6], [11, 3], [11, 7], [12, 2], [12, 8], [13, 2], [13, 8],
+  [14, 5], [15, 3], [15, 7], [16, 4], [16, 5], [16, 6], [17, 5],
+  [20, 2], [20, 3], [20, 4], [21, 2], [21, 3], [21, 4], [22, 1], [22, 5],
+  [24, 0], [24, 1], [24, 5], [24, 6], [34, 2], [34, 3], [35, 2], [35, 3],
 ];
 
 function ageColor(age: number): string {
@@ -44,7 +54,7 @@ export default function LifeCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState(8); // generations per second
+  const [speed, setSpeed] = useState(11); // generations per second
   const [reduced, setReduced] = useState(false);
 
   // Live values the rAF loop reads without re-subscribing.
@@ -89,6 +99,24 @@ export default function LifeCanvas() {
       age.fill(0);
     }
 
+    // Stamp a Gosper glider gun near the top-left so gliders stream diagonally.
+    function seedGliderGun() {
+      const ox = 2;
+      const oy = 2;
+      for (const [x, y] of GLIDER_GUN) {
+        const c = ox + x;
+        const r = oy + y;
+        if (c < cols && r < rows) alive[idx(c, r)] = 1;
+      }
+    }
+
+    // Initial pattern: a glider gun if it fits, otherwise a random soup.
+    function seedInitial() {
+      clear();
+      if (cols >= 40 && rows >= 14) seedGliderGun();
+      else randomize();
+    }
+
     // (Re)allocate the grid to fit the wrapper, preserving overlap region.
     function resize() {
       const w = wrap!.clientWidth;
@@ -111,7 +139,7 @@ export default function LifeCanvas() {
       age = new Float32Array(cols * rows);
       radius = new Float32Array(cols * rows);
       vel = new Float32Array(cols * rows);
-      if (wasEmpty) randomize();
+      if (wasEmpty) seedInitial();
     }
 
     function step() {
@@ -119,11 +147,15 @@ export default function LifeCanvas() {
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           let n = 0;
+          // Dead (non-toroidal) borders: cells off the edge count as dead. This
+          // lets the glider gun fire cleanly — gliders fly off-screen instead of
+          // wrapping around and colliding with the gun.
           for (let dr = -1; dr <= 1; dr++) {
             for (let dc = -1; dc <= 1; dc++) {
               if (dr === 0 && dc === 0) continue;
-              const rr = (r + dr + rows) % rows;
-              const cc = (c + dc + cols) % cols;
+              const rr = r + dr;
+              const cc = c + dc;
+              if (rr < 0 || cc < 0 || rr >= rows || cc >= cols) continue;
               n += alive[idx(cc, rr)];
             }
           }
@@ -144,10 +176,19 @@ export default function LifeCanvas() {
       alive = next;
     }
 
-    function render() {
+    function render(trails: boolean) {
       const cw = canvas!.width;
       const ch = canvas!.height;
-      ctx!.clearRect(0, 0, cw, ch);
+      // Phosphor persistence: fade toward the backdrop instead of clearing, so
+      // moving structures leave trails. When paused/reduced, clear outright.
+      if (trails) {
+        ctx!.fillStyle = `rgba(${BG},${FADE})`;
+        ctx!.fillRect(0, 0, cw, ch);
+      } else {
+        ctx!.fillStyle = `rgb(${BG})`;
+        ctx!.fillRect(0, 0, cw, ch);
+      }
+
       const cell = CELL * dpr;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -156,15 +197,29 @@ export default function LifeCanvas() {
           if (rad <= 0.02) continue;
           const x = (c + 0.5) * cell;
           const y = (r + 0.5) * cell;
-          const rr = Math.min(rad, 1.25) * cell * 0.92;
           const rgb = ageColor(age[i]);
-          const grad = ctx!.createRadialGradient(x, y, 0, x, y, rr);
-          grad.addColorStop(0, `rgba(${rgb},1)`);
-          grad.addColorStop(0.55, `rgba(${rgb},1)`);
-          grad.addColorStop(1, `rgba(${rgb},0)`);
-          ctx!.fillStyle = grad;
+          const k = Math.min(rad, 1.2);
+
+          // Outer colored glow (soft, larger than the cell).
+          const gr = k * cell * 1.15;
+          const glow = ctx!.createRadialGradient(x, y, 0, x, y, gr);
+          glow.addColorStop(0, `rgba(${rgb},0.9)`);
+          glow.addColorStop(0.5, `rgba(${rgb},0.35)`);
+          glow.addColorStop(1, `rgba(${rgb},0)`);
+          ctx!.fillStyle = glow;
           ctx!.beginPath();
-          ctx!.arc(x, y, rr, 0, Math.PI * 2);
+          ctx!.arc(x, y, gr, 0, Math.PI * 2);
+          ctx!.fill();
+
+          // White-hot core so individual cells stay crisp and legible.
+          const cr = k * cell * 0.42;
+          const core = ctx!.createRadialGradient(x, y, 0, x, y, cr);
+          core.addColorStop(0, "rgba(255,255,255,0.95)");
+          core.addColorStop(0.6, `rgba(${rgb},0.95)`);
+          core.addColorStop(1, `rgba(${rgb},0)`);
+          ctx!.fillStyle = core;
+          ctx!.beginPath();
+          ctx!.arc(x, y, cr, 0, Math.PI * 2);
           ctx!.fill();
         }
       }
@@ -218,7 +273,7 @@ export default function LifeCanvas() {
         }
       }
       ease(dt);
-      render();
+      render(playingRef.current && !reducedRef.current);
     }
     raf = requestAnimationFrame(frame);
 

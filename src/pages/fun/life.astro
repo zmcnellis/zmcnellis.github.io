@@ -17,12 +17,12 @@ import LifeCanvas from "../../components/life/LifeCanvas.tsx";
     <p data-animate>
       Conway's Game of Life is a cellular automaton: a grid of cells lives or
       dies each generation by a few tiny rules, and from that simplicity comes
-      surprisingly lifelike behavior. This is my take on it — instead of crisp
-      squares, living cells are rendered as soft-body metaballs that spring into
-      existence, melt away when they die, and glow through a neon spectrum as
-      they age, merging into living plasma. It uses the same gooey metaball
-      technique as the fluid blobs behind the rest of the site, turned up to
-      neon.
+      surprisingly lifelike behavior. This is my take on it — living cells glow
+      as neon dots that spring into existence, melt away when they die, and
+      shift through a cool aurora-to-magenta spectrum as they age. Moving
+      structures leave phosphor trails, so you can actually see things travel,
+      and the board starts with a Gosper glider gun endlessly firing gliders
+      across the field.
     </p>
 
     <div data-animate>
@@ -46,16 +46,14 @@ import LifeCanvas from "../../components/life/LifeCanvas.tsx";
     height: min(60vh, 520px);
     border: 1px solid #2a2550;
     border-radius: 10px;
-    /* Deep indigo backdrop so the neon metaballs read as glowing plasma. */
-    background: radial-gradient(120% 120% at 50% 25%, #16123a 0%, #08071a 70%);
+    /* Matches the canvas fade color (BG = "7,6,26") so trails fade seamlessly. */
+    background: #07061a;
     overflow: hidden;
-    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.55);
   }
   .life-stage canvas {
     display: block;
-    /* The blur+contrast pass thresholds the soft circles into merged, gooey
-       metaball silhouettes; saturate + brightness push the neon glow. */
-    filter: blur(7px) contrast(9) saturate(1.25) brightness(1.12);
+    /* Glow is drawn in-canvas; a touch of saturate/brightness lifts the neon. */
+    filter: saturate(1.15) brightness(1.1);
     touch-action: none;
     cursor: crosshair;
   }
