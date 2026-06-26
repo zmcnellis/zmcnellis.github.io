@@ -27,6 +27,39 @@ import BlobField from "./BlobField.tsx";
     font-family: var(--font-mono);
   }
 
+  .mode-control__row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* Power toggle button */
+  .mode-control__power {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+    backdrop-filter: blur(4px);
+    color: var(--accent); /* lit when on */
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .mode-control__power:hover {
+    border-color: var(--accent);
+  }
+  /* Off state: dim the icon */
+  .mode-control__power[aria-pressed="false"] {
+    color: var(--ink-faint);
+  }
+  .mode-control__power[aria-pressed="false"]:hover {
+    color: var(--ink-muted);
+  }
+
   .mode-control__pill {
     display: inline-flex;
     align-items: center;
@@ -46,6 +79,9 @@ import BlobField from "./BlobField.tsx";
   .mode-control__pill:hover {
     color: var(--ink);
     border-color: var(--accent);
+  }
+  .mode-control__pill.is-off {
+    opacity: 0.5;
   }
   .mode-control__star {
     color: var(--accent);

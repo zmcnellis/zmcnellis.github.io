@@ -16,7 +16,7 @@ import {
   particleFrag,
 } from "./shaders";
 
-const MAX_PARTICLES = 220;
+const MAX_PARTICLES = 600;
 import type { BlobMode, SimParams } from "./modes";
 
 interface DoubleFBO {

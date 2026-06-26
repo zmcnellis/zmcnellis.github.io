@@ -6,7 +6,7 @@
 // y = 0 (bottom of the screen). Positions are exposed in clip space for the
 // metaball point pass.
 
-const MAX = 220;
+const MAX = 600;
 
 export class Sph {
   readonly W: number;
@@ -46,26 +46,26 @@ export class Sph {
     this.rows = Math.max(1, Math.ceil(1 / this.cell));
     this.heads = new Int32Array(this.cols * this.rows);
 
-    // Seed a packed block in the lower-middle; gravity settles it into a pool.
-    // Denser packing → a more continuous (single-body) liquid surface.
-    const spacing = 0.048;
-    const cols = Math.floor((this.W * 0.78) / spacing);
+    // Seed a packed block in the lower portion; gravity settles it into a pool.
+    // Tight packing + many particles → a dense, continuous single-body surface.
+    const spacing = 0.038;
+    const cols = Math.floor((this.W * 0.86) / spacing);
     const x0 = (this.W - cols * spacing) / 2;
     let n = 0;
     let row = 0;
-    while (n < MAX - cols && row < 40) {
+    while (n < MAX - cols && row < 60) {
       for (let c = 0; c < cols && n < MAX; c++) {
         // small deterministic jitter (no Math.random needed, but allowed here)
         const jx = (((n * 13) % 7) / 7 - 0.5) * spacing * 0.3;
         const jy = (((n * 7) % 5) / 5 - 0.5) * spacing * 0.3;
         this.px[n] = x0 + c * spacing + jx;
-        this.py[n] = 0.12 + row * spacing + jy;
+        this.py[n] = 0.1 + row * spacing + jy;
         this.vx[n] = 0;
         this.vy[n] = 0;
         n++;
       }
       row++;
-      if (0.12 + row * spacing > 0.6) break;
+      if (0.1 + row * spacing > 0.5) break;
     }
     this.count = n;
   }

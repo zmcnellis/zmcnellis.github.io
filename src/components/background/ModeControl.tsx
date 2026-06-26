@@ -5,9 +5,17 @@ interface Props {
   modes: ModeMeta[];
   currentId: string;
   onSelect: (id: string) => void;
+  enabled: boolean;
+  onToggleEnabled: () => void;
 }
 
-export default function ModeControl({ modes, currentId, onSelect }: Props) {
+export default function ModeControl({
+  modes,
+  currentId,
+  onSelect,
+  enabled,
+  onToggleEnabled,
+}: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const current = modes.find((m) => m.id === currentId) ?? modes[0];
@@ -32,17 +40,47 @@ export default function ModeControl({ modes, currentId, onSelect }: Props) {
 
   return (
     <div className="mode-control" ref={rootRef}>
-      <button
-        type="button"
-        className="mode-control__pill"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <span className="mode-control__star" aria-hidden="true">✦</span>
-        <span className="mode-control__name">{current.name}</span>
-        <span className="mode-control__chev" aria-hidden="true">{open ? "▴" : "▾"}</span>
-      </button>
+      <div className="mode-control__row">
+        <button
+          type="button"
+          className="mode-control__power"
+          aria-pressed={enabled}
+          aria-label={
+            enabled ? "Turn background animation off" : "Turn background animation on"
+          }
+          title={enabled ? "Animation on" : "Animation off"}
+          onClick={onToggleEnabled}
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+            <path
+              d="M12 3.5v8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M7.6 6.6a7 7 0 1 0 8.8 0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          className={"mode-control__pill" + (enabled ? "" : " is-off")}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="mode-control__star" aria-hidden="true">✦</span>
+          <span className="mode-control__name">{current.name}</span>
+          <span className="mode-control__chev" aria-hidden="true">{open ? "▴" : "▾"}</span>
+        </button>
+      </div>
 
       {open && (
         <ul className="mode-control__menu" role="listbox" aria-label="Background animation">
@@ -51,8 +89,7 @@ export default function ModeControl({ modes, currentId, onSelect }: Props) {
               <button
                 type="button"
                 className={
-                  "mode-control__item" +
-                  (m.id === currentId ? " is-active" : "")
+                  "mode-control__item" + (m.id === currentId ? " is-active" : "")
                 }
                 onClick={() => {
                   onSelect(m.id);

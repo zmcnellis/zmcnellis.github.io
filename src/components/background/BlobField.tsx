@@ -61,10 +61,21 @@ function FluidScene({ reduced, modeId }: { reduced: boolean; modeId: string }) {
   );
 }
 
+const OFF = "off";
+const STORAGE_KEY = "blobMode";
+
 export default function BlobField() {
   const [reduced, setReduced] = useState(false);
-  // Random mode on each load / refresh (per requirement).
+  // Random animated mode each load.
   const [modeId, setModeId] = useState(() => randomModeId());
+  // Animation on/off (power toggle), honouring a persisted "off" preference.
+  const [enabled, setEnabled] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY) !== OFF;
+    } catch {
+      return true;
+    }
+  });
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -74,19 +85,44 @@ export default function BlobField() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  // Persist only the off state; animated modes stay random per load.
+  const setEnabledPersist = (on: boolean) => {
+    setEnabled(on);
+    try {
+      if (!on) localStorage.setItem(STORAGE_KEY, OFF);
+      else localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* localStorage unavailable */
+    }
+  };
+
+  // Picking a mode from the dropdown also turns the animation on.
+  const select = (id: string) => {
+    setModeId(id);
+    setEnabledPersist(true);
+  };
+
   return (
     <>
-      <div className="blob-canvas" aria-hidden="true">
-        <Canvas
-          gl={{ antialias: false, alpha: false, powerPreference: "low-power" }}
-          dpr={[1, 1.5]}
-          frameloop={reduced ? "demand" : "always"}
-          style={{ width: "100%", height: "100%" }}
-        >
-          <FluidScene reduced={reduced} modeId={modeId} />
-        </Canvas>
-      </div>
-      <ModeControl modes={MODE_LIST} currentId={modeId} onSelect={setModeId} />
+      {enabled && (
+        <div className="blob-canvas" aria-hidden="true">
+          <Canvas
+            gl={{ antialias: false, alpha: false, powerPreference: "low-power" }}
+            dpr={[1, 1.5]}
+            frameloop={reduced ? "demand" : "always"}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <FluidScene reduced={reduced} modeId={modeId} />
+          </Canvas>
+        </div>
+      )}
+      <ModeControl
+        modes={MODE_LIST}
+        currentId={modeId}
+        onSelect={select}
+        enabled={enabled}
+        onToggleEnabled={() => setEnabledPersist(!enabled)}
+      />
     </>
   );
 }
