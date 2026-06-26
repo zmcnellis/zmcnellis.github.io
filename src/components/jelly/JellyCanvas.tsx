@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
  */
 
 const POINTS = 16; // masses per blob
-const SUBSTEPS = 8; // physics iterations per frame (stability)
+const SUBSTEPS = 10; // physics iterations per frame (stability)
 const MAX_DT = 1 / 30; // clamp frame delta (s)
 const GRAVITY = 1200; // px/s^2
 const SPRING_K = 520; // perimeter spring stiffness
@@ -22,6 +22,11 @@ const SPRING_D = 20; // perimeter spring damping
 const GAS = 1_700_000; // internal pressure constant
 const VEL_DAMP = 0.996; // global velocity damping per substep
 const RESTITUTION = 0.4; // wall bounciness
+// Stability guards: cap how small the pressure denominator can get (a squashed
+// blob otherwise spikes GAS/area into a force that flings points to infinity),
+// and cap per-point speed so nothing can ever run away.
+const MIN_AREA_RATIO = 0.4; // floor on area used for pressure, as a fraction of rest
+const MAX_SPEED = 2600; // px/s velocity clamp
 const COLORS = [
   { fill: "#e08a5f", glow: "#f0b48f" }, // terracotta
   { fill: "#5aa9b9", glow: "#8fd6e0" }, // teal
@@ -130,7 +135,7 @@ export default function JellyCanvas() {
     }
 
     let grabbed: { blob: Blob; i: number } | null = null;
-    let pointer = { x: 0, y: 0, px: 0, py: 0, down: false };
+    let pointer = { x: 0, y: 0, px: 0, py: 0, vx: 0, vy: 0, down: false };
 
     function physics(dt: number) {
       const g = reducedRef.current ? 0 : GRAVITY;
@@ -159,8 +164,9 @@ export default function JellyCanvas() {
           c.fx -= f * dx;
           c.fy -= f * dy;
         }
-        // internal gas pressure: push each edge outward to preserve area
-        const area = polygonArea(pts) || 1e-4;
+        // internal gas pressure: push each edge outward to preserve area.
+        // Floor the denominator so a squashed blob can't spike the pressure.
+        const area = Math.max(polygonArea(pts), b.restArea * MIN_AREA_RATIO);
         let ccx = 0;
         let ccy = 0;
         for (const p of pts) {
@@ -195,8 +201,22 @@ export default function JellyCanvas() {
         for (const p of pts) {
           p.vx = (p.vx + p.fx * dt) * VEL_DAMP;
           p.vy = (p.vy + p.fy * dt) * VEL_DAMP;
+          // Clamp speed so a force spike can never launch a point off-screen.
+          const sp = Math.hypot(p.vx, p.vy);
+          if (sp > MAX_SPEED) {
+            const s = MAX_SPEED / sp;
+            p.vx *= s;
+            p.vy *= s;
+          }
           p.x += p.vx * dt;
           p.y += p.vy * dt;
+          // Belt-and-suspenders: if anything ever goes non-finite, recover.
+          if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) {
+            p.x = W / 2;
+            p.y = H / 2;
+            p.vx = 0;
+            p.vy = 0;
+          }
           if (p.x < 0) {
             p.x = 0;
             p.vx = -p.vx * RESTITUTION;
@@ -213,13 +233,14 @@ export default function JellyCanvas() {
           }
         }
       }
-      // dragged point follows the pointer
+      // Dragged point follows the pointer; its velocity (for flinging) is the
+      // frame-level pointer velocity, computed once in frame() and clamped.
       if (grabbed && pointer.down) {
         const p = grabbed.blob.pts[grabbed.i];
         p.x = pointer.x;
         p.y = pointer.y;
-        p.vx = (pointer.x - pointer.px) / dt;
-        p.vy = (pointer.y - pointer.py) / dt;
+        p.vx = pointer.vx;
+        p.vy = pointer.vy;
       }
     }
 
@@ -294,6 +315,18 @@ export default function JellyCanvas() {
       }
       const dt = Math.min((now - last) / 1000, MAX_DT);
       last = now;
+      // Frame-level pointer velocity for flinging (clamped). Using the frame dt
+      // here — not the substep dt — avoids overestimating the throw speed.
+      let pvx = (pointer.x - pointer.px) / Math.max(dt, 1e-3);
+      let pvy = (pointer.y - pointer.py) / Math.max(dt, 1e-3);
+      const psp = Math.hypot(pvx, pvy);
+      if (psp > MAX_SPEED) {
+        const s = MAX_SPEED / psp;
+        pvx *= s;
+        pvy *= s;
+      }
+      pointer.vx = pvx;
+      pointer.vy = pvy;
       const sub = dt / SUBSTEPS;
       for (let s = 0; s < SUBSTEPS; s++) physics(sub);
       pointer.px = pointer.x;
@@ -308,7 +341,7 @@ export default function JellyCanvas() {
     }
     function onDown(e: PointerEvent) {
       const { x, y } = posFromEvent(e);
-      pointer = { x, y, px: x, py: y, down: true };
+      pointer = { x, y, px: x, py: y, vx: 0, vy: 0, down: true };
       // grab the nearest point within reach
       let best: { blob: Blob; i: number } | null = null;
       let bestD = 48 * 48;
