@@ -263,9 +263,9 @@ img {
     --space-6: 3rem;
     --space-7: 4rem;
   }
-  .document {
-    padding: 0 var(--space-3);
-  }
+  /* Keep the same comfortable gutter as desktop on phones (the base .document
+     rule already uses max(--space-4, safe-area-inset)). Previously this dropped
+     to --space-3, which made content feel cramped against the screen edge. */
 }
 
 @media (prefers-reduced-motion: reduce) {
