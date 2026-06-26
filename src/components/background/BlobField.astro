@@ -9,15 +9,20 @@ import BlobField from "./BlobField.tsx";
 <style is:global>
   .blob-canvas {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    /* Full screen height incl. behind iOS Safari's toolbars. lvh is the
-       largest the viewport gets and doesn't change as the address bar
-       shows/hides, so the canvas always covers the screen (no bottom cutoff)
-       and doesn't resize on scroll. */
+    /* Bleed into every safe-area inset so the canvas covers the whole physical
+       screen — behind iOS Safari's toolbars AND behind the status bar / notch /
+       home indicator (iOS 26 "Liquid Glass" reserves a top status-bar inset
+       that an inset:0 / top:0 element would start below). Overshooting is fine
+       for a fixed background. lvh is the largest, scroll-stable viewport height. */
+    top: calc(0px - env(safe-area-inset-top, 0px));
+    left: calc(0px - env(safe-area-inset-left, 0px));
+    width: calc(
+      100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)
+    );
     height: 100vh;
-    height: 100lvh;
+    height: calc(
+      100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
+    );
     z-index: -1;
     pointer-events: none;
     background-color: var(--bg);
