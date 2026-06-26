@@ -9,7 +9,15 @@ import BlobField from "./BlobField.tsx";
 <style is:global>
   .blob-canvas {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* Full screen height incl. behind iOS Safari's toolbars. lvh is the
+       largest the viewport gets and doesn't change as the address bar
+       shows/hides, so the canvas always covers the screen (no bottom cutoff)
+       and doesn't resize on scroll. */
+    height: 100vh;
+    height: 100lvh;
     z-index: -1;
     pointer-events: none;
     background-color: var(--bg);
