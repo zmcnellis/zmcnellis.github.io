@@ -1,0 +1,22 @@
+---
+import BlobField from "./BlobField.tsx";
+---
+
+<div class="blob-bg" aria-hidden="true">
+  <BlobField client:visible />
+</div>
+
+<style>
+  .blob-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* Fallback paint before the canvas mounts / if JS is disabled. */
+    background-color: var(--bg);
+  }
+  /* Keep the canvas itself unselectable and behind everything. */
+  .blob-bg :global(canvas) {
+    display: block;
+  }
+</style>

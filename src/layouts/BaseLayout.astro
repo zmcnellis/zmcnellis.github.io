@@ -1,0 +1,58 @@
+---
+import "../styles/global.css";
+import BlobField from "../components/background/BlobField.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Zachary Sorensen McNellis",
+  description = "Zachary Sorensen McNellis — software engineer in San Francisco.",
+} = Astro.props;
+
+const fullTitle =
+  title === "Zachary Sorensen McNellis"
+    ? title
+    : `${title} · Zachary S. McNellis`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- favicons (preserved from the previous site) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Computer Modern (LaTeX) web fonts -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <BlobField />
+    <Header />
+    <main class="page-main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

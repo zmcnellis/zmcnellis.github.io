@@ -1,0 +1,37 @@
+---
+import SocialLinks from "./SocialLinks.astro";
+const year = 2026;
+---
+
+<footer class="site-footer">
+  <hr class="rule" />
+  <div class="document document--wide footer-inner">
+    <SocialLinks />
+    <p class="muted footer-meta">
+      © {year} Zachary Sorensen McNellis · San Francisco
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-bottom: var(--space-5);
+  }
+  .site-footer .rule {
+    max-width: var(--measure-wide);
+    margin-inline: auto;
+    margin-bottom: var(--space-4);
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    margin: 0;
+  }
+</style>

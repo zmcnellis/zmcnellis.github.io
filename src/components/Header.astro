@@ -1,0 +1,82 @@
+---
+const { pathname } = Astro.url;
+const nav = [
+  { label: "Home", href: "/" },
+  { label: "Bio", href: "/bio" },
+  { label: "Resume", href: "/resume" },
+  { label: "Fun stuff", href: "/fun" },
+];
+const isActive = (href: string) =>
+  href === "/" ? pathname === "/" : pathname.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="document document--wide header-inner">
+    <a class="wordmark" href="/">Z. S. McNellis</a>
+    <nav aria-label="Primary">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+  <hr class="rule" />
+</header>
+
+<style>
+  .site-header {
+    padding-top: var(--space-4);
+  }
+  .header-inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .wordmark {
+    font-family: var(--font-serif);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border-bottom: none;
+    color: var(--ink);
+  }
+  .wordmark:hover {
+    color: var(--accent);
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-4);
+  }
+  nav a {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: 0.02em;
+    color: var(--ink-muted);
+    border-bottom: none;
+    padding-bottom: 2px;
+  }
+  nav a:hover {
+    color: var(--accent);
+  }
+  nav a[aria-current="page"] {
+    color: var(--ink);
+    border-bottom: 1px solid var(--accent);
+  }
+  .site-header .rule {
+    max-width: var(--measure-wide);
+    margin-inline: auto;
+    margin-top: var(--space-3);
+  }
+</style>

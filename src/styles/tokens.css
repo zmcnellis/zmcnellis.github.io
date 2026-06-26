@@ -1,0 +1,48 @@
+:root {
+  /* ---- Palette: soft beige paper, warm crisp ink ---- */
+  --bg: #f6f1e7;          /* paper beige */
+  --bg-raised: #fbf8f1;   /* lifted surfaces */
+  --bg-sunk: #efe8d8;     /* subtle wells */
+  --ink: #2b2926;         /* near-black, warm */
+  --ink-muted: #6b655c;   /* secondary text */
+  --ink-faint: #9a9388;   /* captions, meta */
+  --rule: #e3dccd;        /* hairline rules */
+  --rule-strong: #d2c8b4;
+  --accent: #8a5a44;      /* muted terracotta, sparing */
+  --accent-soft: #b07a5e;
+
+  /* Blob background tones (kept close to --bg so it stays subtle) */
+  --blob-a: #efe6d4;
+  --blob-b: #e7dcc4;
+
+  /* ---- Typography ---- */
+  --font-serif: "Computer Modern Serif", "Latin Modern Roman", "CMU Serif",
+    Georgia, "Times New Roman", Times, serif;
+  --font-mono: "Computer Modern Typewriter", "Latin Modern Mono",
+    "CMU Typewriter Text", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Modular type scale (1.25) */
+  --fs-base: 1.125rem;    /* ~18px body */
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.78rem;
+  --fs-lg: 1.4rem;
+  --fs-xl: 1.95rem;
+  --fs-2xl: 2.6rem;
+  --fs-3xl: 3.4rem;
+
+  --lh-body: 1.7;
+  --lh-tight: 1.2;
+
+  /* ---- Layout ---- */
+  --measure: 68ch;        /* max reading width */
+  --measure-wide: 80ch;
+  --space-1: 0.35rem;
+  --space-2: 0.6rem;
+  --space-3: 1rem;
+  --space-4: 1.6rem;
+  --space-5: 2.6rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+
+  --border-thin: 1px;
+}

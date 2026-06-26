@@ -1,0 +1,93 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+
+const links = [
+  {
+    label: "GitHub",
+    href: "https://github.com/zmcnellis",
+    icon: "github",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/zachary-mcnellis",
+    icon: "linkedin",
+  },
+  {
+    label: "Email",
+    href: "mailto:zacharymcnellis@gmail.com",
+    icon: "email",
+  },
+];
+---
+
+<ul class:list={["social", className]}>
+  {
+    links.map((l) => (
+      <li>
+        <a
+          href={l.href}
+          target={l.icon === "email" ? undefined : "_blank"}
+          rel={l.icon === "email" ? undefined : "noopener noreferrer"}
+        >
+          {l.icon === "github" && (
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"
+              />
+            </svg>
+          )}
+          {l.icon === "linkedin" && (
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3v9zM6.5 8.7A1.75 1.75 0 1 1 8.3 7a1.75 1.75 0 0 1-1.8 1.7zM19 19h-3v-4.7c0-1.1 0-2.6-1.6-2.6S12.6 13 12.6 14.2V19h-3v-9h2.9v1.2h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.6 2 3.6 4.7V19z"
+              />
+            </svg>
+          )}
+          {l.icon === "email" && (
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                d="M3 6.5h18v11H3v-11zm0 .5 9 6.5L21 7"
+              />
+            </svg>
+          )}
+          <span>{l.label}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .social {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
+    border-bottom: none;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: 0.02em;
+  }
+  .social a:hover {
+    color: var(--accent);
+  }
+  .social svg {
+    flex: none;
+  }
+</style>
