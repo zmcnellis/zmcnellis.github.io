@@ -149,7 +149,9 @@ function sphMode(): BlobMode {
     name: "Liquid (SPH)",
     description: "A smoothed-particle fluid sloshes and settles.",
     params: {
-      velDissipation: 0, dyeDissipation: 0, threshold: 0.28, softness: 0.16,
+      // lower threshold + soft edge so the dense particles read as one smooth
+      // liquid body rather than separate dots
+      velDissipation: 0, dyeDissipation: 0, threshold: 0.2, softness: 0.2,
       colorA: "#ece4d3", colorB: "#ddccaf", gravity: [0, 0], pressureIters: 0,
       useProjection: false, viscosity: 0, grain: 0,
     },
@@ -157,17 +159,19 @@ function sphMode(): BlobMode {
       sph = new Sph(sim.aspect);
     },
     customStep(sim, t, dt) {
-      // sloshing waves: tilt gravity side to side so the surface rolls
-      sph.setGravity(Math.sin(t * 0.7) * 0.5, -0.85);
+      // very gentle, slow tilt so the body stays spread along the bottom and
+      // just undulates rather than pooling into a corner
+      sph.setGravity(Math.sin(t * 0.35) * 0.1, -0.7);
       // periodic splashes: erupt a column from the pool at a varying spot
-      const interval = 1.6;
+      const interval = 1.7;
       if (Math.floor(t / interval) !== Math.floor((t - dt) / interval)) {
         const idx = Math.floor(t / interval);
         const r = Math.abs(Math.sin(idx * 12.9898) * 43758.5453);
-        sph.splash((r - Math.floor(r)) * sph.W, 1.2, 0.14);
+        sph.splash((r - Math.floor(r)) * sph.W, 1.1, 0.14);
       }
       sph.step(dt);
-      sim.renderParticlesToDye(sph.clip, sph.count, 0.09, 0.6);
+      // larger radius so neighbouring particles merge into a single surface
+      sim.renderParticlesToDye(sph.clip, sph.count, 0.12, 0.7);
     },
     forceVelocity() {},
     sourceDye() {},

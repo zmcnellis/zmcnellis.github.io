@@ -29,7 +29,7 @@ export class Sph {
   private rho0 = 6.5; // rest density
   private gx = 0; // gravity x (set per-frame for sloshing)
   private gy = -1.0; // gravity y (downward)
-  private sigma = 0.06; // viscosity (linear)
+  private sigma = 0.18; // viscosity (linear) — higher = more cohesive & calm
   private substeps = 2;
 
   // uniform grid
@@ -47,8 +47,9 @@ export class Sph {
     this.heads = new Int32Array(this.cols * this.rows);
 
     // Seed a packed block in the lower-middle; gravity settles it into a pool.
-    const spacing = 0.055;
-    const cols = Math.floor((this.W * 0.7) / spacing);
+    // Denser packing → a more continuous (single-body) liquid surface.
+    const spacing = 0.048;
+    const cols = Math.floor((this.W * 0.78) / spacing);
     const x0 = (this.W - cols * spacing) / 2;
     let n = 0;
     let row = 0;
