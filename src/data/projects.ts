@@ -27,6 +27,15 @@ export const projects: Project[] = [
     tags: ["Interactive", "Canvas"],
   },
   {
+    slug: "jelly",
+    title: "Jelly",
+    blurb:
+      "A soft-body physics toy — squishy jelly blobs built from mass-springs and internal pressure that you can grab, fling, and watch wobble.",
+    href: "/fun/jelly",
+    external: false,
+    tags: ["Interactive", "Physics"],
+  },
+  {
     slug: "souls-quick-menu",
     title: "Souls Quick Menu",
     blurb:

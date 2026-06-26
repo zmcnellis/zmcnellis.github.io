@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JellyCanvas from "../../components/jelly/JellyCanvas.tsx";
+---
+
+<BaseLayout
+  title="Jelly"
+  description="A soft-body physics toy — draggable jelly blobs built from mass-springs and internal pressure."
+>
+  <article class="document document--wide">
+    <p class="label" data-animate>
+      <a href="/fun" class="back">← Fun stuff</a>
+    </p>
+    <h1 data-animate>Jelly</h1>
+    <hr class="rule" data-animate />
+
+    <p data-animate>
+      A little soft-body physics toy. Each blob is a ring of point masses held
+      together by springs, with an internal gas-pressure model that pushes the
+      edges outward to keep its round shape — together they give that squishy,
+      shape-restoring jiggle. Grab one and fling it; it'll wobble, squash
+      against the walls, and bounce back.
+    </p>
+
+    <div data-animate>
+      <JellyCanvas client:visible />
+    </div>
+
+    <p class="muted hint" data-animate>
+      Drag a blob to throw it around. <strong>Shake</strong> kicks them all,
+      <strong>Add jelly</strong> drops another in, and <strong>Reset</strong>
+      starts fresh.
+    </p>
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .jelly {
+    margin: var(--space-4) 0;
+  }
+  .jelly-stage {
+    width: 100%;
+    height: min(60vh, 520px);
+    border: 1px solid var(--rule-strong);
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--bg-raised), var(--bg-sunk));
+    overflow: hidden;
+  }
+  .jelly-stage canvas {
+    display: block;
+    touch-action: none;
+    cursor: grab;
+  }
+  .jelly-stage canvas:active {
+    cursor: grabbing;
+  }
+
+  .jelly-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+  .jelly-controls button {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--ink);
+    background: var(--bg-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    padding: var(--space-1) var(--space-3);
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .jelly-controls button:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .jelly-note {
+    margin-top: var(--space-2);
+    font-size: var(--fs-sm);
+    color: var(--ink-muted);
+  }
+</style>
+
+<style>
+  .back {
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .hint {
+    font-size: var(--fs-sm);
+    margin-top: var(--space-3);
+  }
+</style>
