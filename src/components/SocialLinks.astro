@@ -75,6 +75,12 @@ const links = [
     flex-wrap: wrap;
     gap: var(--space-4);
   }
+  /* Override the global `li { margin-bottom }`; in a flex row that bottom
+     margin shifts the icons/labels upward and breaks vertical alignment with
+     adjacent content (e.g. the footer copyright). */
+  .social li {
+    margin: 0;
+  }
   .social a {
     display: inline-flex;
     align-items: center;
