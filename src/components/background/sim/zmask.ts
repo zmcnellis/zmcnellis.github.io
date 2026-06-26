@@ -19,8 +19,18 @@ export function makeZMask(aspect: number): THREE.CanvasTexture {
   ctx.fillStyle = "#fff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  // Size to ~78% of height; serif to match the LaTeX wordmark.
-  ctx.font = `700 ${Math.round(h * 0.78)}px Georgia, "Times New Roman", serif`;
+  // Start from a height-based size (serif, to match the LaTeX wordmark)...
+  let fontSize = Math.round(h * 0.78);
+  ctx.font = `700 ${fontSize}px Georgia, "Times New Roman", serif`;
+  // ...then shrink if the glyph would be too wide for the canvas, so it keeps a
+  // side margin on narrow (portrait / mobile) aspects instead of bleeding to
+  // both edges. On wide desktop canvases this cap never triggers.
+  const maxGlyphW = w * 0.72; // ~14% breathing room each side
+  const measuredW = ctx.measureText("Z").width;
+  if (measuredW > maxGlyphW) {
+    fontSize = Math.max(24, Math.floor(fontSize * (maxGlyphW / measuredW)));
+    ctx.font = `700 ${fontSize}px Georgia, "Times New Roman", serif`;
+  }
   ctx.fillText("Z", w / 2, h / 2 + h * 0.02);
 
   const tex = new THREE.CanvasTexture(canvas);
