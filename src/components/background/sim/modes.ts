@@ -157,8 +157,15 @@ function sphMode(): BlobMode {
       sph = new Sph(sim.aspect);
     },
     customStep(sim, t, dt) {
-      // slowly tilt gravity so the liquid sloshes side to side and climbs walls
-      sph.setGravity(Math.sin(t * 0.5) * 0.35, -0.95);
+      // sloshing waves: tilt gravity side to side so the surface rolls
+      sph.setGravity(Math.sin(t * 0.7) * 0.5, -0.85);
+      // periodic splashes: erupt a column from the pool at a varying spot
+      const interval = 1.6;
+      if (Math.floor(t / interval) !== Math.floor((t - dt) / interval)) {
+        const idx = Math.floor(t / interval);
+        const r = Math.abs(Math.sin(idx * 12.9898) * 43758.5453);
+        sph.splash((r - Math.floor(r)) * sph.W, 1.2, 0.14);
+      }
       sph.step(dt);
       sim.renderParticlesToDye(sph.clip, sph.count, 0.09, 0.6);
     },

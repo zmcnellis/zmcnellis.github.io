@@ -89,6 +89,22 @@ export class Sph {
     this.gy = gy;
   }
 
+  /**
+   * Kick a column of pool particles upward to make a splash that arcs up and
+   * falls back. xWorld in [0, W]; band is the column half-width.
+   */
+  splash(xWorld: number, kick: number, band: number) {
+    for (let i = 0; i < this.count; i++) {
+      if (this.py[i] > 0.4) continue; // only lift particles in the pool
+      const dx = this.px[i] - xWorld;
+      const ax = Math.abs(dx);
+      if (ax >= band) continue;
+      const f = 1 - ax / band; // stronger near the centre of the column
+      this.vy[i] += kick * f;
+      this.vx[i] += dx * 3.0 * f; // fan outward a little
+    }
+  }
+
   /** Run one frame (with internal substeps). dt is seconds. */
   step(dt: number) {
     const sub = dt / this.substeps;
