@@ -9,20 +9,16 @@ import BlobField from "./BlobField.tsx";
 <style is:global>
   .blob-canvas {
     position: fixed;
-    /* Bleed into every safe-area inset so the canvas covers the whole physical
-       screen — behind iOS Safari's toolbars AND behind the status bar / notch /
-       home indicator (iOS 26 "Liquid Glass" reserves a top status-bar inset
-       that an inset:0 / top:0 element would start below). Overshooting is fine
-       for a fixed background. lvh is the largest, scroll-stable viewport height. */
-    top: calc(0px - env(safe-area-inset-top, 0px));
-    left: calc(0px - env(safe-area-inset-left, 0px));
-    width: calc(
-      100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)
-    );
-    height: 100vh;
-    height: calc(
-      100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
-    );
+    /* iOS Safari (esp. iOS 26 on the newest iPhones) reports 100lvh a little
+       SHORT, so a top:0/100lvh canvas leaves a gap at the bottom (and the
+       status bar at the top). The robust, community-proven fix is to simply
+       OVERSHOOT — extra height on a fixed background is invisible. Anchor a bit
+       above the top and add generous height to cover both ends. */
+    top: -80px;
+    left: 0;
+    width: 100vw;
+    height: 100vh; /* fallback for browsers without lvh */
+    height: calc(100lvh + 160px);
     z-index: -1;
     pointer-events: none;
     background-color: var(--bg);
@@ -74,6 +70,7 @@ import BlobField from "./BlobField.tsx";
   }
 
   .mode-control__pill {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.5ch;
@@ -88,6 +85,57 @@ import BlobField from "./BlobField.tsx";
     border-radius: 999px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Attention nudge: a dark segment crawls around the pill's border every few
+     seconds until the visitor opens the menu (then .is-nudging is removed). */
+  @property --pill-crawl {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+  .mode-control__pill.is-nudging::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--pill-crawl),
+      transparent 0deg,
+      var(--ink) 8deg,
+      transparent 22deg,
+      transparent 360deg
+    );
+    /* Mask to just the border ring (border-box minus content-box). */
+    -webkit-mask: linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    animation: pill-crawl 5.5s ease-in-out infinite;
+  }
+  @keyframes pill-crawl {
+    0% {
+      --pill-crawl: 0deg;
+      opacity: 0;
+    }
+    6% {
+      opacity: 1;
+    }
+    30% {
+      --pill-crawl: 360deg;
+      opacity: 1;
+    }
+    38% {
+      opacity: 0;
+    }
+    100% {
+      --pill-crawl: 360deg;
+      opacity: 0;
+    }
   }
   .mode-control__pill:hover {
     color: var(--ink);
@@ -164,6 +212,10 @@ import BlobField from "./BlobField.tsx";
   @media (prefers-reduced-motion: reduce) {
     .mode-control__pill {
       backdrop-filter: none;
+    }
+    .mode-control__pill.is-nudging::after {
+      animation: none;
+      opacity: 0;
     }
   }
 </style>
