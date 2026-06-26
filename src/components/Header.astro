@@ -32,7 +32,7 @@ const isActive = (href: string) =>
 
 <style>
   .site-header {
-    padding-top: var(--space-4);
+    padding-top: max(var(--space-4), env(safe-area-inset-top));
   }
   .header-inner {
     display: flex;

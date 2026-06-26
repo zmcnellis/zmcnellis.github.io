@@ -12,7 +12,11 @@ import {
   addForceFrag,
   viscosityFrag,
   maskSourceFrag,
+  particleVert,
+  particleFrag,
 } from "./shaders";
+
+const MAX_PARTICLES = 220;
 import type { BlobMode, SimParams } from "./modes";
 
 interface DoubleFBO {
@@ -95,6 +99,12 @@ export class FluidSimulation {
   private mMaskSource: THREE.ShaderMaterial;
   composite: THREE.ShaderMaterial;
 
+  // Particle (SPH) metaball pass (instanced quads).
+  private particleGeo: THREE.InstancedBufferGeometry;
+  private particleOffsets: THREE.InstancedBufferAttribute;
+  private particleMat: THREE.ShaderMaterial;
+  private particleScene = new THREE.Scene();
+
   // Shared scratch arrays for point-based injection (filled by modes).
   readonly points: THREE.Vector2[];
   readonly forces: THREE.Vector3[];
@@ -109,7 +119,7 @@ export class FluidSimulation {
     const base = 192;
     this.aspect = viewW / Math.max(1, viewH);
     this.height = base;
-    this.width = Math.round(base * this.aspect);
+    this.width = Math.max(1, Math.round(base * this.aspect));
     this.texel = new THREE.Vector2(1 / this.width, 1 / this.height);
 
     this.velocity = makeDoubleFBO(this.width, this.height);
@@ -200,6 +210,44 @@ export class FluidSimulation {
 
     this.quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2));
     this.scene.add(this.quad);
+
+    // Particle metaball pass (additive instanced quads → dye field).
+    this.particleGeo = new THREE.InstancedBufferGeometry();
+    // Quad corners in [-1,1] as a 3-component `position` (ShaderMaterial needs
+    // a `position` attribute to derive the draw count).
+    this.particleGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(
+        new Float32Array([-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]),
+        3
+      )
+    );
+    this.particleGeo.setIndex([0, 1, 2, 2, 1, 3]);
+    this.particleOffsets = new THREE.InstancedBufferAttribute(
+      new Float32Array(MAX_PARTICLES * 2),
+      2
+    );
+    this.particleOffsets.setUsage(THREE.DynamicDrawUsage);
+    this.particleGeo.setAttribute("aOffset", this.particleOffsets);
+    this.particleGeo.instanceCount = 0;
+    this.particleMat = new THREE.ShaderMaterial({
+      vertexShader: particleVert,
+      fragmentShader: particleFrag,
+      uniforms: {
+        uRadius: { value: 0.1 },
+        uAspect: { value: this.aspect },
+        uAmount: { value: 0.5 },
+      },
+      depthTest: false,
+      depthWrite: false,
+      blending: THREE.CustomBlending,
+      blendEquation: THREE.AddEquation,
+      blendSrc: THREE.OneFactor,
+      blendDst: THREE.OneFactor,
+    });
+    const particleMesh = new THREE.Mesh(this.particleGeo, this.particleMat);
+    particleMesh.frustumCulled = false;
+    this.particleScene.add(particleMesh);
   }
 
   private runPass(material: THREE.ShaderMaterial, target: THREE.WebGLRenderTarget | null) {
@@ -302,6 +350,33 @@ export class FluidSimulation {
     this.dye.swap();
   }
 
+  /**
+   * Render `count` particles (clip-space xyz, packed stride 3) as additive
+   * gaussian metaballs into the dye field — used by the SPH mode. `radius` is
+   * in clip-space (y) units. Replaces the dye contents each call.
+   */
+  renderParticlesToDye(clip: Float32Array, count: number, radius: number, amount: number) {
+    const off = this.particleOffsets.array as Float32Array;
+    for (let i = 0; i < count; i++) {
+      off[i * 2] = clip[i * 3];
+      off[i * 2 + 1] = clip[i * 3 + 1];
+    }
+    this.particleOffsets.needsUpdate = true;
+    this.particleGeo.instanceCount = count;
+    this.particleMat.uniforms.uRadius.value = radius;
+    this.particleMat.uniforms.uAmount.value = amount;
+
+    const prev = this.gl.getClearColor(new THREE.Color()).clone();
+    const prevAlpha = this.gl.getClearAlpha();
+    this.gl.setClearColor(0x000000, 0);
+    this.gl.setRenderTarget(this.dye.write); // autoClear wipes to 0, then quads add
+    this.gl.render(this.particleScene, this.camera);
+    this.gl.setRenderTarget(null);
+    this.gl.setClearColor(prev, prevAlpha);
+
+    this.composite.uniforms.uDye.value = this.dye.write.texture;
+  }
+
   // ---- lifecycle ------------------------------------------------------------
 
   /** Clear velocity / dye / pressure fields to zero. */
@@ -336,6 +411,14 @@ export class FluidSimulation {
   /** Advance one tick: shared solver core + the active mode's injections. */
   step(dt: number, t: number) {
     if (!this.mode) return;
+
+    // Modes with their own simulation (e.g. SPH) bypass the Eulerian pipeline.
+    if (this.mode.customStep) {
+      this.mode.customStep(this, t, dt);
+      this.composite.uniforms.uTime.value = t;
+      this.gl.setRenderTarget(null);
+      return;
+    }
 
     // 1. advect velocity through itself
     this.advect(this.velocity, this.velocity.read.texture, this.params.velDissipation, dt);
@@ -377,9 +460,11 @@ export class FluidSimulation {
     this.pressure.write.dispose();
     this.divergence.dispose();
     this.quad.geometry.dispose();
+    this.particleGeo.dispose();
     [
       this.mAdvect, this.mSplat, this.mDivergence, this.mPressure, this.mGradient,
       this.mCurl, this.mAddForce, this.mViscosity, this.mMaskSource, this.composite,
+      this.particleMat,
     ].forEach((m) => m.dispose());
   }
 }

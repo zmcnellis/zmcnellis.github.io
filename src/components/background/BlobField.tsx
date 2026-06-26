@@ -11,13 +11,25 @@ function FluidScene({ reduced, modeId }: { reduced: boolean; modeId: string }) {
   const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
 
-  // Rebuild the solver when the viewport size changes so the field tracks the
-  // aspect (no stretch on resize / rotate).
-  const sizeKey = `${size.width}x${size.height}`;
+  // Only rebuild the solver on a *significant* size change (orientation), and
+  // debounced. iOS Safari shows/hides the address bar on scroll, which changes
+  // the height every frame — rebuilding (a synchronous 110-step warmup) on each
+  // of those is what froze/jittered scrolling. Small height changes are ignored;
+  // the canvas still fills the viewport, blobs just stretch imperceptibly.
+  const [built, setBuilt] = useState({ w: size.width, h: size.height });
+  useEffect(() => {
+    const a0 = built.w / Math.max(1, built.h);
+    const a1 = size.width / Math.max(1, size.height);
+    const widthChanged = Math.abs(size.width - built.w) > Math.max(80, built.w * 0.15);
+    const aspectChanged = Math.abs(a1 - a0) / a0 > 0.2;
+    if (!widthChanged && !aspectChanged) return;
+    const id = setTimeout(() => setBuilt({ w: size.width, h: size.height }), 250);
+    return () => clearTimeout(id);
+  }, [size.width, size.height, built]);
+
   const sim = useMemo(
-    () => new FluidSimulation(gl, size.width, size.height),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [gl, sizeKey]
+    () => new FluidSimulation(gl, built.w, built.h),
+    [gl, built.w, built.h]
   );
   useEffect(() => () => sim.dispose(), [sim]);
 

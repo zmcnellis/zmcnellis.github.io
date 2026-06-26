@@ -222,6 +222,34 @@ export const viscosityFrag = /* glsl */ `
   }
 `;
 
+// Instanced-quad metaball pass: each SPH particle is a soft gaussian quad,
+// accumulated additively into the dye field (One/One blending). Instanced quads
+// instead of GL points because gl_PointSize is clamped to ~1px on many GPUs.
+// aOffset is the particle's clip-space position; `corner` spans [-1,1].
+export const particleVert = /* glsl */ `
+  attribute vec2 aOffset;
+  uniform float uRadius;   // clip-space (y) radius
+  uniform float uAspect;
+  varying vec2 vLocal;
+  void main() {
+    vLocal = position.xy;  // quad corner in [-1,1]; 'position' auto-declared
+    vec2 p = aOffset + vec2(position.x * uRadius / uAspect, position.y * uRadius);
+    gl_Position = vec4(p, 0.0, 1.0);
+  }
+`;
+
+export const particleFrag = /* glsl */ `
+  precision highp float;
+  uniform float uAmount;
+  varying vec2 vLocal;
+  void main() {
+    float d2 = dot(vLocal, vLocal);   // 0 at centre, 1 at quad edge
+    if (d2 > 1.0) discard;
+    float g = exp(-d2 * 3.0);
+    gl_FragColor = vec4(vec3(uAmount * g), 1.0);
+  }
+`;
+
 // Add dye wherever a mask texture is non-zero. Used by the letter "Z" mode.
 export const maskSourceFrag = /* glsl */ `
   precision highp float;

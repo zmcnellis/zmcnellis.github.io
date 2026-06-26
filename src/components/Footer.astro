@@ -15,7 +15,7 @@ const year = 2026;
 
 <style>
   .site-footer {
-    padding-bottom: var(--space-5);
+    padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
   }
   .site-footer .rule {
     max-width: var(--measure-wide);

@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { FluidSimulation } from "./FluidSimulation";
 import { Flock } from "./boids";
 import { makeZMask } from "./zmask";
+import { Sph } from "./sph";
 
 export interface SimParams {
   velDissipation: number;
@@ -25,6 +26,8 @@ export interface BlobMode {
   init(sim: FluidSimulation): void;
   forceVelocity(sim: FluidSimulation, t: number, dt: number): void;
   sourceDye(sim: FluidSimulation, t: number, dt: number): void;
+  // If present, fully replaces the Eulerian pipeline for this mode (e.g. SPH).
+  customStep?(sim: FluidSimulation, t: number, dt: number): void;
   dispose?(): void;
 }
 
@@ -139,33 +142,28 @@ function dripMode(): BlobMode {
   };
 }
 
-function sandMode(): BlobMode {
-  const n = 8;
-  const g = -0.5;
+function sphMode(): BlobMode {
+  let sph: Sph;
   return {
-    id: "sand",
-    name: "Sand fall",
-    description: "Grainy motes scatter down and fade.",
+    id: "sph",
+    name: "Liquid (SPH)",
+    description: "A smoothed-particle fluid sloshes and settles.",
     params: {
-      // No projection (falling motes, not a fluid wall). Fast dye dissipation
-      // keeps the motes sparse and short-lived so coverage stays light.
-      velDissipation: 1.0, dyeDissipation: 1.9, threshold: 0.22, softness: 0.05,
-      colorA: "#e9e0cb", colorB: "#d8c9ab", gravity: [0, g], pressureIters: 0,
-      useProjection: false, viscosity: 0, grain: 0.22,
+      velDissipation: 0, dyeDissipation: 0, threshold: 0.28, softness: 0.16,
+      colorA: "#ece4d3", colorB: "#ddccaf", gravity: [0, 0], pressureIters: 0,
+      useProjection: false, viscosity: 0, grain: 0,
     },
-    init() {},
-    forceVelocity(sim, _t, dt) {
-      sim.addForce(0, g, dt);
+    init(sim) {
+      sph = new Sph(sim.aspect);
     },
-    sourceDye(sim) {
-      // Fresh random emission points across the full width each frame, so the
-      // motes scatter like falling sand instead of forming columns.
-      for (let i = 0; i < n; i++) {
-        sim.points[i].set(Math.random(), 0.93 + Math.random() * 0.05);
-        sim.dyeVals[i].set(0.5, 0, 0);
-      }
-      sim.splatDye(n, 0.0008);
+    customStep(sim, t, dt) {
+      // slowly tilt gravity so the liquid sloshes side to side and climbs walls
+      sph.setGravity(Math.sin(t * 0.5) * 0.35, -0.95);
+      sph.step(dt);
+      sim.renderParticlesToDye(sph.clip, sph.count, 0.09, 0.6);
     },
+    forceVelocity() {},
+    sourceDye() {},
   };
 }
 
@@ -234,7 +232,7 @@ const FACTORIES: Record<string, () => BlobMode> = {
   flocking: flockingMode,
   curl: curlMode,
   drip: dripMode,
-  sand: sandMode,
+  sph: sphMode,
   ink: inkMode,
   z: letterZMode,
 };

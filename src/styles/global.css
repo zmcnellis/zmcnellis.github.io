@@ -15,6 +15,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  /* So any area outside the canvas (e.g. behind the notch / status bar) is
+     beige rather than white. */
+  background-color: var(--bg);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -29,9 +32,10 @@ body {
   font-size: var(--fs-base);
   line-height: var(--lh-body);
   color: var(--ink);
-  background-color: var(--bg);
-  /* The blob canvas sits behind everything; keep the body transparent
-     so it shows through, but paint a fallback colour for no-JS. */
+  /* Transparent so the fixed z-index:-1 blob canvas shows through. The beige
+     lives on <html> (which also fills the notch / safe areas). If body had an
+     opaque background it would paint over the negative-z canvas. */
+  background-color: transparent;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -128,7 +132,9 @@ img {
   width: 100%;
   max-width: var(--measure);
   margin-inline: auto;
-  padding: 0 var(--space-4);
+  /* Respect the notch in landscape without shifting the centred column. */
+  padding-left: max(var(--space-4), env(safe-area-inset-left));
+  padding-right: max(var(--space-4), env(safe-area-inset-right));
 }
 
 .document--wide {

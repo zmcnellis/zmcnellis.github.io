@@ -15,13 +15,20 @@ const {
 } = Astro.props;
 
 const fullTitle = `${title} | Zachary McNellis`;
+
+// Only emit analytics in production builds so local dev traffic isn't tracked.
+const isProd = import.meta.env.PROD;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f6f1e7" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
 
@@ -59,6 +66,19 @@ const fullTitle = `${title} | Zachary McNellis`;
         });
       })();
     </script>
+
+    <!-- Cloudflare Web Analytics (privacy-friendly, cookieless). Prod only so
+         local dev traffic doesn't pollute stats. Token is public by design. -->
+    {
+      isProd && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "9b70de63bd5f4316ba75aa1563e5a3fb"}'
+        ></script>
+      )
+    }
   </head>
   <body>
     <BlobField />
@@ -70,28 +90,17 @@ const fullTitle = `${title} | Zachary McNellis`;
 
     <script>
       import { gsap } from "gsap";
-      import { ScrollTrigger } from "gsap/ScrollTrigger";
 
       if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        gsap.registerPlugin(ScrollTrigger);
         // mark ready so the head failsafe stands down
         document.documentElement.classList.add("anim-ready");
 
-        const items = gsap.utils.toArray<HTMLElement>("[data-animate]");
-        items.forEach((el, i) => {
-          gsap.fromTo(
-            el,
-            { opacity: 0, y: 22 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.7,
-              ease: "power2.out",
-              delay: Math.min(i, 8) * 0.05,
-              scrollTrigger: { trigger: el, start: "top 88%", once: true },
-            }
-          );
-        });
+        // Reveal everything on load with a gentle stagger (no scroll gating).
+        gsap.fromTo(
+          "[data-animate]",
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", stagger: 0.06 }
+        );
       }
     </script>
   </body>
