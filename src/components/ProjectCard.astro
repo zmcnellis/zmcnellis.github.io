@@ -1,0 +1,74 @@
+---
+import type { Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+const { title, blurb, stat, href, external, tags } = project;
+
+const linkAttrs = external
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {};
+---
+
+<a href={href} class="index-card project-card" {...linkAttrs}>
+  <span class="index-card__body">
+    <span class="card-top">
+      <span class="index-title">
+        {title}
+        {external && <span class="ext" aria-hidden="true">↗</span>}
+      </span>
+      {stat && <span class="stat">{stat}</span>}
+    </span>
+    <span class="index-blurb muted">{blurb}</span>
+    {
+      tags && tags.length > 0 && (
+        <span class="tags">
+          {tags.map((t) => (
+            <span class="tag">{t}</span>
+          ))}
+        </span>
+      )
+    }
+  </span>
+</a>
+
+<style>
+  .card-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .ext {
+    font-size: 0.8em;
+    color: var(--ink-faint);
+  }
+  .project-card:hover .ext {
+    color: var(--accent);
+  }
+  .stat {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: var(--space-2);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 0.1rem 0.6rem;
+  }
+</style>

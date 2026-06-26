@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Code℞"
+  description="Code℞ — the applied prototype from my master's thesis on a language-agnostic Generic Abstract Syntax Tree (GAST) for automated software-metric computation."
+>
+  <article class="document">
+    <p class="label" data-animate>
+      <a href="/fun" class="back">← Fun stuff</a>
+    </p>
+    <h1 data-animate>Code℞</h1>
+    <p class="muted thesis-title" data-animate>
+      From my master's thesis, <em>Construction of a Generic Program
+      Representation for Automated Metric Computation</em> · M.S. Computer
+      Science, Clemson University, 2016
+    </p>
+    <hr class="rule" data-animate />
+
+    <p data-animate>
+      Code℞ is the applied prototype from my master's thesis. It's an online
+      evaluator that grades programming solutions on the <em>quality</em> of the
+      code, not just whether it produces the right answer — the kind of feedback
+      that platforms like Codecademy, Code Wars, and Project Euler don't give.
+      You submit a solution in C++ or Python and get back a report of software
+      metrics, with the goal of nudging beginners toward code that's actually
+      readable and maintainable.
+    </p>
+
+    <h2 data-animate>The research behind it</h2>
+    <p data-animate>
+      Software metrics — measures like cyclomatic complexity and the Halstead
+      suite — give a quantitative read on code quality. The problem is that the
+      tools that compute them are almost always tied to a single language: pick
+      your metrics, and you may not find a tool that supports the language you
+      actually wrote your program in.
+    </p>
+    <p data-animate>
+      My thesis tackles that with a <strong>Generic Abstract Syntax Tree
+      (GAST)</strong> — a language-agnostic program representation that sits one
+      level of abstraction above an ordinary AST, capturing just the syntactic
+      categories that metric computation needs. The approach leans on existing
+      front-end parsers to lower a program into this shared representation
+      (validated against an XML schema), after which any metric can be computed
+      once, as a simple tree traversal, and reused across every language that
+      maps into the GAST. I demonstrated it by wiring up the Python and C++
+      front ends and computing McCabe and Halstead metrics over three
+      real open-source projects and a set of Project Euler solutions.
+    </p>
+    <p data-animate>
+      Code℞ takes that machinery and points it at computer-science education:
+      same metrics, same generic representation, wrapped in a tool a student can
+      actually submit to and learn from.
+    </p>
+
+    <h2 data-animate>Read more</h2>
+    <ul class="links" data-animate>
+      <li>
+        <a
+          href="https://zmcnellis.github.io/projects/thesis/presentation.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Defense presentation (PDF) ↗
+        </a>
+      </li>
+      <li>
+        <a
+          href="http://tigerprints.clemson.edu/cgi/viewcontent.cgi?article=3346&context=all_theses"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Full thesis on Clemson TigerPrints ↗
+        </a>
+      </li>
+    </ul>
+  </article>
+</BaseLayout>
+
+<style>
+  .back {
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .thesis-title {
+    font-size: var(--fs-sm);
+    margin-top: var(--space-1);
+  }
+  .links {
+    list-style: none;
+    margin-left: 0;
+  }
+</style>

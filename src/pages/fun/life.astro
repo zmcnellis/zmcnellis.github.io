@@ -1,0 +1,122 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LifeCanvas from "../../components/life/LifeCanvas.tsx";
+---
+
+<BaseLayout
+  title="Game of Life"
+  description="Conway's Game of Life reimagined as soft-body metaballs — cells spring to life, melt away, and drift through a rainbow as they age."
+>
+  <article class="document document--wide">
+    <p class="label" data-animate>
+      <a href="/fun" class="back">← Fun stuff</a>
+    </p>
+    <h1 data-animate>Conway's Game of Life</h1>
+    <hr class="rule" data-animate />
+
+    <p data-animate>
+      Conway's Game of Life is a cellular automaton: a grid of cells lives or
+      dies each generation by a few tiny rules, and from that simplicity comes
+      surprisingly lifelike behavior. This is my take on it — instead of crisp
+      squares, living cells are rendered as soft-body metaballs that spring into
+      existence, melt away when they die, and glow through a neon spectrum as
+      they age, merging into living plasma. It uses the same gooey metaball
+      technique as the fluid blobs behind the rest of the site, turned up to
+      neon.
+    </p>
+
+    <div data-animate>
+      <LifeCanvas client:visible />
+    </div>
+
+    <p class="muted hint" data-animate>
+      Click or drag on the grid to paint cells. The rules: a living cell with
+      two or three neighbors survives; a dead cell with exactly three neighbors
+      is born; everything else dies.
+    </p>
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .life {
+    margin: var(--space-4) 0;
+  }
+  .life-stage {
+    width: 100%;
+    height: min(60vh, 520px);
+    border: 1px solid #2a2550;
+    border-radius: 10px;
+    /* Deep indigo backdrop so the neon metaballs read as glowing plasma. */
+    background: radial-gradient(120% 120% at 50% 25%, #16123a 0%, #08071a 70%);
+    overflow: hidden;
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.55);
+  }
+  .life-stage canvas {
+    display: block;
+    /* The blur+contrast pass thresholds the soft circles into merged, gooey
+       metaball silhouettes; saturate + brightness push the neon glow. */
+    filter: blur(7px) contrast(9) saturate(1.25) brightness(1.12);
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .life-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+  .life-controls button {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--ink);
+    background: var(--bg-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    padding: var(--space-1) var(--space-3);
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .life-controls button:hover:not(:disabled) {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .life-controls button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .life-controls .speed {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6ch;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .life-controls .speed input {
+    accent-color: var(--accent);
+  }
+  .life-note {
+    margin-top: var(--space-2);
+    font-size: var(--fs-sm);
+    color: var(--ink-muted);
+  }
+</style>
+
+<style>
+  .back {
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .hint {
+    font-size: var(--fs-sm);
+    margin-top: var(--space-3);
+  }
+</style>

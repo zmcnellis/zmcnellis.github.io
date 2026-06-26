@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const environments = [
+  { label: "Courtyard", href: "https://guestexp360.com/cy" },
+  { label: "SpringHill Suites", href: "https://guestexp360.com/shs" },
+  { label: "Four Points", href: "https://guestexp360.com/fp" },
+  { label: "Fairfield", href: "https://guestexp360.com/ff" },
+];
+---
+
+<BaseLayout
+  title="Marriott 360° AR Experience"
+  description="A WebVR experience for a Marriott conference — 360° panoramic hotel tours, scaled to ~1,000 concurrent users."
+>
+  <article class="document">
+    <p class="label" data-animate>
+      <a href="/fun" class="back">← Fun stuff</a>
+    </p>
+    <h1 data-animate>Marriott 360° AR Experience</h1>
+    <hr class="rule" data-animate />
+
+    <p data-animate>
+      In 2019 I worked with Marriott to create an augmented reality experience
+      for a conference they were hosting. The goal was a mobile-friendly site
+      where users could view 360° panoramic photos of various hotel rooms —
+      photos that could then be viewed through a VR headset such as Google
+      Cardboard or Oculus.
+    </p>
+    <p data-animate>
+      I built the front-end in React and hosted it on Zeit so I could scale up
+      quickly — at peak there were up to 1,000 active users in the VR experience
+      at the same time. I implemented some backend work with Firebase, plus
+      Google Analytics tracking. The WebVR technology is built on A-Frame, an
+      open-source, cross-platform web VR framework.
+    </p>
+    <p data-animate>
+      The site was initially built for Courtyard only, but after its success I
+      was asked to build out separate environments for SpringHill Suites, Four
+      Points, and Fairfield.
+    </p>
+
+    <h2 data-animate>Explore the environments</h2>
+    <ul class="env-list" data-animate>
+      {
+        environments.map((env) => (
+          <li>
+            <a href={env.href} target="_blank" rel="noopener noreferrer">
+              {env.label} ↗
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+</BaseLayout>
+
+<style>
+  .back {
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .env-list {
+    list-style: none;
+    margin-left: 0;
+  }
+</style>

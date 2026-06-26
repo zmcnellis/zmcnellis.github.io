@@ -1,19 +1,36 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { projects } from "../data/projects";
 ---
 
-<BaseLayout title="Fun stuff" description="Experiments and side projects by Zachary Sorensen McNellis.">
+<BaseLayout title="Fun stuff" description="Interactive demos, a Skyrim mod, and graphics experiments by Zachary Sorensen McNellis.">
   <article class="document">
-    <p class="label">Fun stuff</p>
-    <h1>Fun stuff</h1>
-    <hr class="rule" />
-    <p class="muted">
-      <em>This page is a stub — experiments and demos coming soon.</em>
+    <p class="label" data-animate>Fun stuff</p>
+    <h1 data-animate>Fun stuff</h1>
+    <hr class="rule" data-animate />
+    <p data-animate>
+      A home for the playful things — interactive demos, graphics experiments,
+      and side projects I've made over the years. Poke around; most of them are
+      live and clickable.
     </p>
-    <p>
-      A home for the playful things: shader sketches, simulations, and
-      side projects. The fluid-driven blobs behind every page are the first
-      resident.
-    </p>
+
+    <nav class="project-grid" aria-label="Projects">
+      {
+        projects.map((project) => (
+          <div data-animate>
+            <ProjectCard project={project} />
+          </div>
+        ))
+      }
+    </nav>
   </article>
 </BaseLayout>
+
+<style>
+  .project-grid {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+</style>

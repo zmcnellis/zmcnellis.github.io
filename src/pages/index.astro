@@ -7,7 +7,7 @@ import profile from "../assets/profile.jpg";
 const pages = [
   { href: "/bio", title: "Bio", blurb: "Background, what I build, and how I got here." },
   { href: "/resume", title: "Resume", blurb: "Experience, skills, and a PDF to download." },
-  { href: "/fun", title: "Fun stuff", blurb: "Experiments, visuals, and side projects." },
+  { href: "/fun", title: "Fun stuff", blurb: "Interactive demos, a Skyrim mod, and graphics experiments." },
 ];
 ---
 
@@ -26,10 +26,13 @@ const pages = [
     <p class="label" data-animate>Software Engineer · San Francisco</p>
     <h1 data-animate>Zachary Sorensen McNellis</h1>
     <p class="lede" data-animate>
-      I'm a software engineer based in San Francisco. I like building things
-      that are fast, careful, and a little bit playful — with the occasional
-      detour into graphics and simulation (the blobs drifting behind this page
-      are a real&nbsp;fluid&nbsp;solver).
+      I'm a software engineer in San Francisco with 10+ years of experience and
+      a master's in computer science (computer graphics). I'm a senior engineer
+      at Webflow, and was previously an engineering manager at Shipt (acquired
+      by Target). Most of my career has been at small startups, where I've come
+      to love the scrappy blend of creativity and problem-solving. Off the
+      clock, you'll probably catch me rollerblading around the city on light-up
+      wheels — usually with my dog Boulder on the leash.
     </p>
     <SocialLinks class="hero-social" data-animate />
   </section>
@@ -107,61 +110,12 @@ const pages = [
     margin-top: var(--space-4);
   }
 
-  /* ---- Section index cards with rainbow glow on hover ---- */
+  /* ---- Section index card grid (card styles live in global.css) ---- */
   .index-nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: var(--space-3);
-  }
-  .index-card {
-    position: relative;
-    z-index: 0;
-    display: block;
-    border-radius: 8px;
-    border-bottom: none;
-    transition: transform 0.25s ease;
-  }
-  /* The rainbow glow sits behind the opaque body, so it only haloes the edges. */
-  .index-card::before {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border-radius: inherit;
-    background: conic-gradient(from var(--glow-angle), var(--rainbow-stops));
-    filter: blur(13px);
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    z-index: -1;
-  }
-  .index-card__body {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--rule);
-    border-radius: inherit;
-    background: var(--bg-raised);
-    transition: border-color 0.25s ease;
-  }
-  .index-card:hover {
-    transform: translateY(-2px);
-    color: var(--ink);
-  }
-  .index-card:hover .index-card__body {
-    border-color: transparent;
-  }
-  .index-card:hover::before {
-    opacity: 0.6;
-    animation: glow-spin 6s linear infinite;
-  }
-  .index-title {
-    font-weight: 700;
-    font-size: var(--fs-lg);
-  }
-  .index-blurb {
-    font-size: var(--fs-sm);
   }
 </style>

@@ -192,6 +192,57 @@ img {
   --rainbow-stops: #ff6b81, #ffb648, #ffe66d, #5cdb8f, #5ab9ff, #b98cff, #ff6b81;
 }
 
+/* ---------- Index / project cards with rainbow glow on hover (shared) ---------- */
+.index-card {
+  position: relative;
+  z-index: 0;
+  display: block;
+  border-radius: 8px;
+  border-bottom: none;
+  transition: transform 0.25s ease;
+}
+/* The rainbow glow sits behind the opaque body, so it only haloes the edges. */
+.index-card::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--glow-angle), var(--rainbow-stops));
+  filter: blur(13px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: -1;
+}
+.index-card__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: inherit;
+  background: var(--bg-raised);
+  transition: border-color 0.25s ease;
+}
+.index-card:hover {
+  transform: translateY(-2px);
+  color: var(--ink);
+}
+.index-card:hover .index-card__body {
+  border-color: transparent;
+}
+.index-card:hover::before {
+  opacity: 0.6;
+  animation: glow-spin 6s linear infinite;
+}
+.index-title {
+  font-weight: 700;
+  font-size: var(--fs-lg);
+}
+.index-blurb {
+  font-size: var(--fs-sm);
+}
+
 /* ---------- Scroll-in animation (GSAP) ---------- */
 /* Only hide elements when JS will animate them in — set by an inline head
    script that respects prefers-reduced-motion, so no-JS / reduced-motion

@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Souls Quick Menu"
+  description="A Skyrim mod that brings a Dark Souls–style radial quick menu to the game — with 115k+ downloads on Nexus Mods."
+>
+  <article class="document">
+    <p class="label" data-animate>
+      <a href="/fun" class="back">← Fun stuff</a>
+    </p>
+    <h1 data-animate>Souls Quick Menu</h1>
+    <p class="muted stat-line" data-animate>Skyrim mod · 115k+ downloads on Nexus Mods</p>
+    <hr class="rule" data-animate />
+
+    <p data-animate>
+      Souls Quick Menu is a mod for The Elder Scrolls V: Skyrim that brings a
+      <em>Dark Souls</em>–style radial quick menu into the game. Instead of
+      pausing to dig through the favorites menu, you assign your weapons,
+      spells, shouts, and items to a quick-access wheel and cycle through them
+      on the fly — keeping you in the moment when a fight gets hectic.
+    </p>
+    <p data-animate>
+      It started as a small personal itch — combat in Skyrim always felt like it
+      paused for inventory management — and grew into something the wider
+      community adopted. To date it's been downloaded more than 115,000 times,
+      which is easily the most-used thing I've ever shipped to strangers on the
+      internet.
+    </p>
+
+    <p data-animate>
+      <a href="https://www.nexusmods.com/skyrim/mods/72238" target="_blank" rel="noopener noreferrer">
+        View Souls Quick Menu on Nexus Mods ↗</a
+      >
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .back {
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .stat-line {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    margin-top: var(--space-1);
+  }
+</style>

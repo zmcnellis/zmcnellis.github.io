@@ -1,20 +1,248 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const experience = [
+  {
+    company: "Webflow",
+    title: "Senior Software Engineer, Tech Lead",
+    location: "San Francisco, CA",
+    dates: "2024 – Present",
+    bullets: [
+      "Serve as Tech Lead for the AI Workflows platform, architecting frontend infrastructure for agentic automations used by internal teams and external developers.",
+      "Design scalable APIs, SDKs, and developer tooling, establishing foundational patterns that improve developer velocity and consistency across the app ecosystem.",
+      "Contribute to long-term web platform strategy, driving adoption of shared UI components and enhancing the extensibility of third-party integrations.",
+      "Champion AI-powered development workflows within the engineering org, using Claude to raise the bar for productivity and code quality.",
+    ],
+  },
+  {
+    company: "Squadformers",
+    title: "Senior Software Engineer",
+    location: "San Francisco, CA",
+    dates: "2022 – 2024",
+    bullets: [
+      "Led full-stack and frontend development for early-stage startups, transforming ambiguous requirements into production-ready solutions.",
+      "Architected and delivered highly performant native mobile (React Native) and web applications for clients across FinTech, EdTech, and Data Management.",
+      "Set up core frontend build pipelines with strict adherence to accessibility and responsive design principles.",
+    ],
+  },
+  {
+    company: "Bakesale",
+    title: "Cofounder / Engineering Lead",
+    location: "Los Angeles, CA",
+    dates: "2022 – 2023",
+    bullets: [
+      "Co-founded and built an early-stage B2B SaaS wholesale marketplace serving the Los Angeles metro market — working closely with Duff Goldman of the Food Network.",
+      "Drove all technical and architectural decisions, balancing rapid prototyping velocity with long-term platform scalability.",
+    ],
+  },
+  {
+    company: "Pallet",
+    title: "Senior Full-Stack Engineer",
+    location: "New York, NY",
+    dates: "2021 – 2022",
+    bullets: [
+      "Joined as the second engineer, taking a leading technical role in building the initial recruiting platform product from the ground up.",
+      "Architected server-side rendered (SSR) web applications using Next.js and TypeScript, optimizing for SEO and Core Web Vitals.",
+      "Integrated Apollo Client with Django GraphQL for robust, type-safe data fetching and state management.",
+    ],
+  },
+  {
+    company: "Shipt",
+    title: "Engineering Manager, MarTech (2019–2020) · Senior Software Engineer (2018–2019)",
+    location: "San Francisco, CA",
+    dates: "2018 – 2020",
+    bullets: [
+      "Led the frontend architecture and implementation of an internal experimentation platform, accelerating the delivery of A/B tests and optimizing user acquisition.",
+      "Drove systemic improvements in frontend performance and established strict code review standards across the marketing technology organization.",
+    ],
+  },
+];
+
+const skills = [
+  {
+    group: "Languages & Frameworks",
+    items: "JavaScript, TypeScript, React, React Native, Next.js, Node.js, GraphQL, Python, HTML/CSS, CSS-in-JS",
+  },
+  {
+    group: "Architecture & Performance",
+    items: "Frontend Tooling, Component Libraries, Design Systems, Core Web Vitals, Bundle Optimization, SSR/SSG",
+  },
+  {
+    group: "Tools & Practices",
+    items: "AI-assisted development (Cursor, Claude, Codex), Redux, Apollo Client, A/B Testing Infrastructure, CI/CD",
+  },
+];
 ---
 
-<BaseLayout title="Resume" description="Resume of Zachary Sorensen McNellis.">
-  <article class="document">
-    <p class="label">Resume</p>
-    <h1>Resume</h1>
-    <hr class="rule" />
-    <p class="muted">
-      <em>This page is a stub — a formatted résumé will live here.</em>
-    </p>
-    <p>
-      In the meantime, you can
-      <a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
-        >download the current PDF</a
-      >.
-    </p>
+<BaseLayout title="Resume" description="Resume of Zachary Sorensen McNellis — senior software engineer in San Francisco.">
+  <article class="document document--wide">
+    <header class="resume-head" data-animate>
+      <div>
+        <p class="label">Resume</p>
+        <h1>Zachary Sorensen McNellis</h1>
+        <p class="muted">Senior Software Engineer · San Francisco, CA</p>
+      </div>
+      <a class="pdf-btn" href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+        Download PDF ↓
+      </a>
+    </header>
+
+    <hr class="rule" data-animate />
+
+    <section data-animate>
+      <h2>Summary</h2>
+      <p>
+        Senior Engineer with over 10 years of experience leading architecture,
+        development, and scaling of high-performance web applications. Proven
+        track record of building shared UI frameworks, developer tooling, and
+        platform infrastructure that empower product teams. Deep expertise in
+        React, TypeScript, modern frontend architecture, and React Native.
+        Passionate about leveraging AI-powered development tools to accelerate
+        engineering velocity and pioneer AI-first platform solutions.
+      </p>
+    </section>
+
+    <section data-animate>
+      <h2>Experience</h2>
+      {
+        experience.map((role) => (
+          <div class="role">
+            <div class="role-head">
+              <p class="role-title">
+                <strong>{role.company}</strong> · {role.title}
+              </p>
+              <p class="role-meta muted">
+                {role.location} · {role.dates}
+              </p>
+            </div>
+            <ul>
+              {role.bullets.map((b) => (
+                <li>{b}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </section>
+
+    <section data-animate>
+      <h2>Education</h2>
+      <div class="role">
+        <div class="role-head">
+          <p class="role-title"><strong>Clemson University</strong></p>
+          <p class="role-meta muted">2012 – 2016</p>
+        </div>
+        <ul>
+          <li>
+            MS Computer Science (Graphics &amp; Visualization) — GPA 4.00 · BS
+            Computer Science (Honors), Summa Cum Laude — GPA 4.00
+          </li>
+          <li>
+            Additional experience: Contract Software Engineer at Marriott (WebVR
+            platform, 2019); Software Developer at CGI &amp; Lincs (2015–2018).
+          </li>
+          <li>
+            Published author in automated metric computation &amp; networked
+            controllers; Graduate Teaching Assistant (C++ &amp; Game Engine
+            Construction).
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section data-animate>
+      <h2>Skills</h2>
+      <dl class="skills">
+        {
+          skills.map((s) => (
+            <div class="skill-row">
+              <dt>{s.group}</dt>
+              <dd class="muted">{s.items}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
   </article>
 </BaseLayout>
+
+<style>
+  .resume-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .resume-head h1 {
+    margin: var(--space-1) 0;
+  }
+
+  .pdf-btn {
+    flex: none;
+    border: 1px solid var(--rule-strong);
+    border-radius: 8px;
+    padding: var(--space-2) var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--ink);
+    background: var(--bg-raised);
+    white-space: nowrap;
+    transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .pdf-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .role {
+    margin-bottom: var(--space-4);
+  }
+  .role-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem var(--space-3);
+  }
+  .role-title {
+    margin: 0;
+  }
+  .role-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+  }
+  .role ul {
+    margin-top: var(--space-2);
+  }
+
+  .skills {
+    margin: 0;
+  }
+  .skill-row {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--rule);
+  }
+  .skill-row dt {
+    font-weight: 700;
+  }
+  .skill-row dd {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .skill-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+    .role-meta {
+      white-space: normal;
+    }
+  }
+</style>
