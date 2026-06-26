@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Fluid Background"
+  description="The drifting blobs behind every page are a real-time WebGL fluid simulation I built from scratch, with several switchable modes."
+>
+  <article class="document">
+    <p class="label" data-animate>
+      <a href="/fun" class="back">← Fun stuff</a>
+    </p>
+    <h1 data-animate>Fluid Background</h1>
+    <hr class="rule" data-animate />
+
+    <p data-animate>
+      The soft blobs drifting behind every page on this site aren't a video or a
+      pre-rendered loop — they're a real-time fluid simulation I wrote from
+      scratch. It runs on the GPU with WebGL (via Three.js and React Three
+      Fiber), stepping a fluid solver a few dozen times a second and rendering
+      the result as a smooth metaball iso-surface in the site's paper-beige
+      palette.
+    </p>
+
+    <p data-animate>
+      Most modes use a grid-based, stable-fluids–style solver — advecting a
+      velocity field and a dye field, with pressure projection to keep the flow
+      incompressible. One mode swaps that out for a smoothed-particle (SPH)
+      liquid that sloshes and settles like water in a tank. There are a handful
+      of personalities to choose from:
+    </p>
+
+    <ul data-animate>
+      <li><strong>Letter "Z"</strong> — dye gathers into a softly breathing Z (the default).</li>
+      <li><strong>Curl flow</strong> — a curl-noise flow field carries the dye in lazy swirls.</li>
+      <li><strong>Liquid (SPH)</strong> — a smoothed-particle fluid sloshes, splashes, and settles.</li>
+      <li><strong>Ink</strong> — thick, viscous billows drift slowly.</li>
+      <li><strong>Drip</strong> — heavy blobs detach and fall, lava-lamp style.</li>
+      <li><strong>Flocking</strong> — a flock of boids stirs the fluid as it swarms.</li>
+    </ul>
+
+    <p data-animate>
+      You can switch modes (or turn the animation off entirely) with the
+      <span class="chip">✦ control</span> floating in the top-right corner — go
+      give it a try; the background you're looking at right now will change.
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .back {
+    border-bottom: none;
+    color: var(--ink-faint);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+</style>

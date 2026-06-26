@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { FluidSimulation } from "./sim/FluidSimulation";
-import { MODE_LIST, createMode, randomModeId } from "./sim/modes";
+import { MODE_LIST, createMode } from "./sim/modes";
 import ModeControl from "./ModeControl";
 
 const STEP = 1 / 30; // throttle the solver to ~30Hz
@@ -66,8 +66,9 @@ const STORAGE_KEY = "blobMode";
 
 export default function BlobField() {
   const [reduced, setReduced] = useState(false);
-  // Random animated mode each load.
-  const [modeId, setModeId] = useState(() => randomModeId());
+  // Default to the "Z" wordmark mode on every load; visitors can switch via the
+  // corner control. (Mode choice isn't persisted — only the off preference is.)
+  const [modeId, setModeId] = useState("z");
   // Animation on/off (power toggle), honouring a persisted "off" preference.
   const [enabled, setEnabled] = useState(() => {
     try {

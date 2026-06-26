@@ -17,6 +17,9 @@ export default function ModeControl({
   onToggleEnabled,
 }: Props) {
   const [open, setOpen] = useState(false);
+  // Until the visitor opens the menu once, the pill periodically "crawls" a
+  // dark segment around its border to draw attention to the switcher.
+  const [interacted, setInteracted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const current = modes.find((m) => m.id === currentId) ?? modes[0];
 
@@ -71,10 +74,17 @@ export default function ModeControl({
 
         <button
           type="button"
-          className={"mode-control__pill" + (enabled ? "" : " is-off")}
+          className={
+            "mode-control__pill" +
+            (enabled ? "" : " is-off") +
+            (interacted ? "" : " is-nudging")
+          }
           aria-haspopup="listbox"
           aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            setInteracted(true);
+            setOpen((v) => !v);
+          }}
         >
           <span className="mode-control__star" aria-hidden="true">✦</span>
           <span className="mode-control__name">{current.name}</span>
@@ -104,6 +114,10 @@ export default function ModeControl({
               </button>
             </li>
           ))}
+          <li className="mode-control__credit" role="presentation">
+            These are a real-time fluid simulation I built from scratch.{" "}
+            <a href="/fun/fluid">How it works →</a>
+          </li>
         </ul>
       )}
     </div>

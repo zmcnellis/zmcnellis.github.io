@@ -18,6 +18,15 @@ export interface Project {
  */
 export const projects: Project[] = [
   {
+    slug: "fluid",
+    title: "Fluid Background",
+    blurb:
+      "The drifting blobs behind every page are a real-time fluid simulation I built from scratch — with several modes you can switch between using the ✦ control in the corner.",
+    href: "/fun/fluid",
+    external: false,
+    tags: ["WebGL", "Graphics"],
+  },
+  {
     slug: "life",
     title: "Conway's Game of Life",
     blurb:
